@@ -20,3 +20,8 @@ def inventario_compra (request):
     return render(request,'inventario_compras.html')
 def inventario_ver (request):
     return render(request,'inventario_ver.html')
+
+def proveedores_ingresar(request):
+    return render(request,'proveedores_ingresar.html')
+def proveedores_ver(request):
+    return render(request,'proveedores_ver.html')
