@@ -8,10 +8,13 @@ def inicio (request):
     return render(request,'inicio.html')
 
 def empleados (request):
-    return render (request,'empleados.html')
+    return render (request,'empleados_ver.html')
 
 def agregar_Empleado (request):
     return render(request,'empleados_agregar.html')
 
 def catalogo (request):
     return render(request,'catalogo.html')
+
+def inventario_compra (request):
+    return render(request,'inventario_compras.html')
