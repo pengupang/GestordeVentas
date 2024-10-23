@@ -18,3 +18,5 @@ def catalogo (request):
 
 def inventario_compra (request):
     return render(request,'inventario_compras.html')
+def inventario_ver (request):
+    return render(request,'inventario_ver.html')
