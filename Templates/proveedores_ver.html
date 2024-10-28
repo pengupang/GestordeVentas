@@ -13,13 +13,37 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Acciones</th>
+                       
                         <th>Proveedor</th>
                         <th>Representante</th>
                         <th>Contacto</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {%for pro in proveedor%}
+                    <tr>
+                        <td>{{pro.id}}</td>
+                        <td>{{pro.Nombre}}</td>
+                        <td>{{pro.Representante}}</td>
+                        <td>{{pro.Contacto}}</td>
+                        <td>
+                            <a href="#"
+                              class='btn btn-success'><i class="bi bi-eye"></i>
+                           </a>
+                        </td>
+                        <td>
+                            <a href="#"
+                              class='btn btn-warning'><i class="bi bi-pencil"></i>
+                           </a>
+                        </td>
+                        <td>
+                            <a href="#"
+                              class='btn btn-danger'><i class="bi bi-trash"></i>
+                           </a>
+                        </td>
+                    </tr>
+                    {%endfor%}
                 </tbody>
             </table>
         </div>
