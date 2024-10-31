@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from App.models import Proveedor
-from .forms import ProveedorForm
+from django.shortcuts import render, redirect
+from App.models import Proveedor, Empleado
+from .forms import ProveedorForm, EmpleadoForm
 
 
 
@@ -17,8 +17,15 @@ View Empleados
 def empleados (request):
     return render (request,'empleados_ver.html')
 
-def agregar_Empleado (request):
-    return render(request,'empleados_agregar.html')
+def agregar_empleado(request):
+    form = EmpleadoForm()
+    if request.method == 'POST':
+        form = EmpleadoForm(request.POST)
+        if form.is_valid():
+            form.save()
+    data = {'form': form }
+    return render(request,'empleados_agregar.html',data)
+    
 
 """
 View Catalago 
@@ -50,3 +57,5 @@ def proveedores_ver(request):
     proveedor = Proveedor.objects.all()
     data = {'proveedor':proveedor}
     return render(request,'proveedores_ver.html',data)
+
+

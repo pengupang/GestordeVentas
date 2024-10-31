@@ -12,50 +12,11 @@
                 </ul>
                 <div class="card shadow-lg p-4">
                     <h3 class="text-center mb-4">Agregar Empleado</h3>
-                    <form method="POST" action="#">
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="firstName" name="first_name" placeholder=" Nombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="lastName" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Apellido" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email ID</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email ID" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirme Contraseña</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirme Contraseña" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="gender" class="form-label">Genero</label>
-                            <select class="form-select" id="gender" name="gender" required>
-                                <option selected disabled value="">Seleccione Genero</option>
-                                <option value="male">Hombre</option>
-                                <option value="female">Mujer</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="age" class="form-label">Edad</label>
-                            <input type="number" class="form-control" id="age" name="age" placeholder="Edad" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Tipo</label><br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="manager" name="type" value="manager" required>
-                                <label class="form-check-label" for="manager">Manager</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="employee" name="type" value="employee" required>
-                                <label class="form-check-label" for="employee">Empleado</label>
-                            </div>
-                        </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{form}}
+                        
+                        
                         <button type="submit" class="btn btn-primary w-100">Guardar</button>
                     </form>
                 </div>

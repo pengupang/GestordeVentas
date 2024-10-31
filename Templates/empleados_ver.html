@@ -15,47 +15,24 @@
                     <tr>
                         <th>Acciones</th>
                         <th>Nombre</th>
-                        <th>Género</th>
+                        <th>Apellido</th>
                         <th>Email</th>
+                        <th>Género</th>
                         <th>Edad</th>
+                        <th>Tipo empleado</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for empleado in empleados %}
                     <tr>
-                        <td><i class="bi bi-pencil"></i></td>
-                        <td>Pat Black</td>
-                        <td>Male</td>
-                        <td>bill.berry@example.com</td>
-                        <td>28</td>
+                        <td>{{ empleado.nombre }}</td>
+                        <td>{{ empleado.apellido }}</td>
+                        <td>{{ empleado.email }}</td>
+                        <td>{{ empleado.genero }}</td>
+                        <td>{{ empleado.edad }}</td>
+                        <td>{{ empleado.tipo }}</td>
                     </tr>
-                    <tr>
-                        <td><i class="bi bi-pencil"></i></td>
-                        <td>Angel Jones</td>
-                        <td>Female</td>
-                        <td>glen.ramirez@example.com</td>
-                        <td>36</td>
-                    </tr>
-                    <tr>
-                        <td><i class="bi bi-pencil"></i></td>
-                        <td>Max Edwards</td>
-                        <td>Female</td>
-                        <td>renee.hughes@example.com</td>
-                        <td>27</td>
-                    </tr>
-                    <tr>
-                        <td><i class="bi bi-pencil"></i></td>
-                        <td>Bruce Fox</td>
-                        <td>Male</td>
-                        <td>craig.kelley@example.com</td>
-                        <td>43</td>
-                    </tr>
-                    <tr>
-                        <td><i class="bi bi-pencil"></i></td>
-                        <td>Devon Fisher</td>
-                        <td>Male</td>
-                        <td>joy.ramos@example.com</td>
-                        <td>32</td>
-                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
