@@ -1,5 +1,5 @@
 from django import forms
-from App.models import Proveedor, Empleado
+from App.models import Proveedor, Empleado, Compra
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
@@ -23,4 +23,14 @@ class EmpleadoForm(forms.ModelForm):
             'genero': forms.Select(attrs={'class': 'form-control'}, choices=[('M', 'Masculino'), ('F', 'Femenino')]),
             'edad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Edad'}),
             'tipo': forms.RadioSelect(attrs={'class': 'form-check-input'},choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')]),
+        }
+
+class CompraForm(forms.ModelForm):
+    class Meta:
+        model = Compra
+        fields = '__all__'
+        widgets = {
+            'producto': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
         }

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from App.models import Proveedor, Empleado
-from .forms import ProveedorForm, EmpleadoForm
+from .forms import ProveedorForm, EmpleadoForm, CompraForm
 
 
 
@@ -41,8 +41,16 @@ def catalogo (request):
 """
 View Inventario 
 """
-def inventario_compra (request):
-    return render(request,'inventario_compras.html')
+def inventario_compra(request):
+    if request.method == 'POST':
+        form = CompraForm(request.POST)
+        if form.is_valid():
+            form.save()  
+            return redirect('inventario_ver.html')  
+    else:
+        form = CompraForm()
+    
+    return render(request, 'inventario_compras.html', {'form': form})
 def inventario_ver (request):
     return render(request,'inventario_ver.html')
 

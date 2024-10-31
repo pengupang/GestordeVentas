@@ -16,4 +16,9 @@ class Empleado(models.Model):
     edad = models.IntegerField()
     tipo = models.CharField(max_length=10, choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')])
 
+class Compra(models.Model):
+    producto = models.CharField(max_length=50)
+    catidad = models.IntegerField()
+    precio = models.IntegerField()
+
     
