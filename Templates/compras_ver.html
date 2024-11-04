@@ -10,30 +10,31 @@
         </ul>
         <div class="table-container">
             <ul class="nav nav-tabs">
-                <li class="nav-item"><a href="{% url 'inventario_ver' %}" class="nav-link active "> Inventario</a></li>
-                <li class="nav-item "><a href="{% url 'compras_ver' %}" class="nav-link "> Compras</a></li>  
+                <li class="nav-item"><a href="{% url 'inventario_ver' %}" class="nav-link "> Inventario</a></li>
+                <li class="nav-item "><a href="{% url 'compras_ver' %}" class="nav-link active"> Compras</a></li>  
             </ul>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Acciones</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
+                        <th>Proveedor</th>
+                        <th>N° guia</th>
+                        <th>Productos</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for producto in productos %}
+                    {% for compras in compra %}
                     <tr>
                         <td>
                             <a href="#" class="nav-item"><i class="bi bi-pencil"></i></a> 
-                            <a href="{% url 'deshabilitar_producto' %}" class="nav-item" title="Deshabilitar">
+                            <a href="{% url 'compra_deshabilitar' %}" class="nav-item" title="Deshabilitar">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </a>
                         </td>
-                        <td>{{ producto.producto }}</td>
-                        <td>{{ producto.cantidad }}</td>
-                        <td>{{ producto.precio }}</td>
+                        <td>{{ compras.producto}}</td>
+                        <td>{{ compras.cantidad }}</td>
+                        <td>{{ compras.precio }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

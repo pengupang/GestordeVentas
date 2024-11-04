@@ -16,13 +16,14 @@ class Empleado(models.Model):
     edad = models.IntegerField()
     tipo = models.CharField(max_length=10, choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')])
 
-class Compra(models.Model):
-    producto = models.CharField(max_length=50)
-    catidad = models.IntegerField()
+class Producto(models.Model):
+    nombre = models.CharField(max_length=50)
+    cantidad = models.IntegerField()
     precio = models.IntegerField()
+    habilitado = models.BooleanField(default=True)
 
 class Compra(models.Model):
     producto = models.CharField(max_length=50)
     cantidad = models.IntegerField()
     precio = models.IntegerField()
-    habilitado = models.BooleanField(default=True)
+    

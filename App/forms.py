@@ -1,5 +1,5 @@
 from django import forms
-from App.models import Proveedor, Empleado, Compra
+from App.models import Proveedor, Empleado, Compra, Producto
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
@@ -33,4 +33,16 @@ class CompraForm(forms.ModelForm):
             'producto': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
+        }
+
+class ProductoForm (forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = '__all__'
+        widgets = {
+            'nombre':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
+
+
         }

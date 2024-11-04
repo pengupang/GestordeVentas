@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from App.models import Proveedor, Empleado, Compra
+from App.models import Proveedor, Empleado, Compra,Producto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm
 
 
@@ -41,24 +41,14 @@ def catalogo (request):
 """
 View Inventario 
 """
-def inventario_compra(request):
-    if request.method == 'POST':
-        form = CompraForm(request.POST)
-        if form.is_valid():
-            form.save()  
-            return redirect('inventario_ver.html')  
-    else:
-        form = CompraForm()
-    
-    return render(request, 'inventario_compras.html', {'form': form})
 
 def inventario_ver(request):
-    productos = Compra.objects.filter(habilitado=True)
+    productos = Producto.objects.filter(habilitado=True)
     return render(request, 'inventario_ver.html', {'productos': productos})
 
 
 def deshabilitar_producto(request, producto_id):
-    producto = get_object_or_404(Compra, id=producto_id)
+    producto = get_object_or_404(Producto, id=producto_id)
     producto.habilitado = False
     producto.save()
     messages.success(request, f'Producto {producto.producto} deshabilitado.')
@@ -84,6 +74,43 @@ def proveedores_ver(request):
     proveedor = Proveedor.objects.all()
     data = {'proveedor':proveedor}
     return render(request,'proveedores_ver.html',data)
+
+"""
+View Compras 
+"""
+def compra_Agregar(request):
+    if request.method == 'POST':
+        form = CompraForm(request.POST)
+        if form.is_valid():
+            form.save()  
+            return redirect('compras_ver')  
+    else:
+        form = CompraForm()
+    
+    return render(request, 'inventario_compras.html', {'form': form, 'titulo':'ingresar Compra'})
+
+def compras_Ver (request):
+    compra = Compra.objects.all()
+    data = {'compra':compra}
+    return render(request,'compras_ver.html',data)
+
+def compra_deshabilitar(request,compra_id):
+    compra = get_object_or_404(Compra, id=compra_id)
+    compra.habilitado = False
+    compra.save()
+    messages.success(request, f'Producto {compra.producto} deshabilitado.')
+    return redirect('compras_ver') 
+
+def compra_editar(request,id):
+    compra=Compra.objects.get(id=id)
+    form=CompraForm(instance=compra)
+    if request.method=="POST":
+        form=CompraForm(request.POST,instance=compra)
+        if form.is_valid():
+            form.save()
+        return compras_Ver(request)
+    data={'form':form,'titulo':'Actualizar Compra'}
+    return render(request,'inventario_compras.html',data)
 
 #def eliminar_proveedor(request, id):
 #    proveedor = get_object_or_404(Proveedor, id = id)
