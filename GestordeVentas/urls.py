@@ -25,8 +25,9 @@ urlpatterns = [
     path('empleados_ver/',views.empleados),
     path('empleados_agregar/',views.agregar_empleado),
     path('catalogo/',views.catalogo),
-    path('inventario_compra/',views.inventario_compra),
-    path('inventario_ver/',views.inventario_ver),
+    path('inventario_compras/', views.inventario_compra, name='inventario_compras'),
+    path('inventario_ver/', views.inventario_ver, name='inventario_ver'),
+    path('inventario/deshabilitar/', views.deshabilitar_producto, name='deshabilitar_producto'),
     path('proveedor_ver/',views.proveedores_ver),
     path('proveedor_ingresar/',views.proveedores_ingresar)
 

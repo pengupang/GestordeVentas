@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from App.models import Proveedor, Empleado
+from App.models import Proveedor, Empleado, Compra
 from .forms import ProveedorForm, EmpleadoForm, CompraForm
 
 
@@ -51,8 +51,18 @@ def inventario_compra(request):
         form = CompraForm()
     
     return render(request, 'inventario_compras.html', {'form': form})
-def inventario_ver (request):
-    return render(request,'inventario_ver.html')
+
+def inventario_ver(request):
+    productos = Compra.objects.filter(habilitado=True)
+    return render(request, 'inventario_ver.html', {'productos': productos})
+
+
+def deshabilitar_producto(request, producto_id):
+    producto = get_object_or_404(Compra, id=producto_id)
+    producto.habilitado = False
+    producto.save()
+    messages.success(request, f'Producto {producto.producto} deshabilitado.')
+    return redirect('inventario_ver') 
 
 """
 View Proveedores 

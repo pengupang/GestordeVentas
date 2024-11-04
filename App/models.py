@@ -21,4 +21,8 @@ class Compra(models.Model):
     catidad = models.IntegerField()
     precio = models.IntegerField()
 
-    
+class Compra(models.Model):
+    producto = models.CharField(max_length=50)
+    cantidad = models.IntegerField()
+    precio = models.IntegerField()
+    habilitado = models.BooleanField(default=True)
