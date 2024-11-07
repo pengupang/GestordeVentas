@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from App.models import Proveedor, Empleado, Compra,Producto
-from .forms import ProveedorForm, EmpleadoForm, CompraForm
+from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
 
 
 
@@ -46,6 +46,16 @@ def inventario_ver(request):
     productos = Producto.objects.filter(habilitado=True)
     return render(request, 'inventario_ver.html', {'productos': productos})
 
+def actualizar_inventario(request,id):
+    productos=Producto.objects.get(id=id)
+    form=ProductoForm(instance= productos)
+    if request.method=="POST":
+        form=ProductoForm(request.POST,instance=productos)
+        if form.is_valid():
+            form.save()
+        return inventario_ver(request)
+    data={'form':form,'titulo':'Actualizar Inventario'}
+    return render(request,'inventario_ver.html',data)
 
 def deshabilitar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
