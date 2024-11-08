@@ -30,6 +30,13 @@ def agregar_empleado(request):
             messages.error(request, 'Error empleado no ingresado')
     data = {'form': form }
     return render(request,'empleados_agregar.html',data)
+
+def deshabilitar_empleado(request, empleado_id):
+    empleados = get_object_or_404(Empleado, id=empleado_id)
+    empleados.habilitado = False  
+    empleados.save()
+    messages.success(request, f'Empleado {empleados.nombre} deshabilitado.')
+    return redirect('empleados_ver')
     
 
 """
@@ -85,6 +92,26 @@ def proveedores_ver(request):
     data = {'proveedor':proveedor}
     return render(request,'proveedores_ver.html',data)
 
+def deshabilitar_proveedor(request, proveedor_id):
+    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
+    proveedor.habilitado = False  
+    proveedor.save()
+    messages.success(request, f'Proveedor {proveedor.Nombre} deshabilitado.')
+    return redirect('lista_proveedores')
+
+def actualizar_proveedor(request, proveedor_id):
+    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
+    
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST, instance=proveedor)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_proveedores')  # Redirige a la lista de proveedores después de actualizar
+    else:
+        form = ProveedorForm(instance=proveedor)
+    
+    return render(request, 'actualizar_proveedor.html', {'form': form, 'proveedor': proveedor})
+
 """
 View Compras 
 """
@@ -128,6 +155,4 @@ def compra_editar(request,id):
 #        proveedor.delete()
 #        messages.success(request,'Proveedor Eliminado')
 #        return redirect('')
-
-
 

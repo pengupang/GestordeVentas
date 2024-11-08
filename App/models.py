@@ -5,6 +5,7 @@ class Proveedor(models.Model):
     Nombre = models.CharField (max_length=60)
     Representante = models.CharField (max_length=80)
     Contacto = models.CharField (max_length= 14)
+    habilitado = models.BooleanField(default=True)
 
 
 class Empleado(models.Model):
@@ -15,6 +16,7 @@ class Empleado(models.Model):
     genero = models.CharField(max_length=10, choices=[('M', 'Masculino'), ('F', 'Femenino')])
     edad = models.IntegerField()
     tipo = models.CharField(max_length=10, choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')])
+    habilitado = models.BooleanField(default=True)
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=50)
