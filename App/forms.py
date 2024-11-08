@@ -12,6 +12,18 @@ class ProveedorForm(forms.ModelForm):
         
 
 class EmpleadoForm(forms.ModelForm):
+    tipo = forms.ChoiceField(
+        choices=[('Manager', 'Manager'), ('Bodeguero', 'Bodeguero'), ('Vendedor', 'Vendedor')],
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        required=True,
+        initial='Manager'
+    )
+    habilitado = forms.BooleanField(
+        required=False,
+        initial=True,  # Marcado por defecto
+        label='Habilitado en la tienda'
+    )
+
     class Meta:
         model = Empleado
         fields = '__all__' 
@@ -22,8 +34,9 @@ class EmpleadoForm(forms.ModelForm):
             'contrasena': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}),
             'genero': forms.Select(attrs={'class': 'form-control'}, choices=[('M', 'Masculino'), ('F', 'Femenino')]),
             'edad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Edad'}),
-            'tipo': forms.RadioSelect(attrs={'class': 'form-check-input'},choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')]),
-        }
+            'tipo': forms.RadioSelect(attrs={'class': 'form-check-input'}),
+            'habilitado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),        }
+
 
 
 

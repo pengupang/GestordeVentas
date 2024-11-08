@@ -6,16 +6,53 @@
         <div class="row justify-content-center">
             <div class="col-lg-6">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item"><a href="{% url 'proveedores_ver' %}" class="nav-link">Ver</a></li>
-                    <li class="nav-item"><a href="{% url 'proveedores_agregar' %}" class="nav-link">Agregar</a></li>  
+                    <li class="nav-item"><a href="../empleados_ver/" class="nav-link">Ver</a></li>
+                    <li class="nav-item"><a href="../empleados_agregar/" class="nav-link">Agregar</a></li>  
                 </ul>
                 <div class="card shadow-lg p-4">
-                    <h3 class="text-center mb-4">Actualizar Proveedor</h3>
+                    <h3 class="text-center mb-4">Agregar empleado</h3>
                     <form method="POST">
                         {% csrf_token %}
-                        {{ form }}
+                        <div class="mb-3">
+                            {{ form.nombre.label_tag }}
+                            {{ form.nombre }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.apellido.label_tag }}
+                            {{ form.apellido }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.contrasena.label_tag }}
+                            {{ form.contrasena }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.genero.label_tag }}
+                            {{ form.genero }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.edad.label_tag }}
+                            {{ form.edad }}
+                        </div>
                         
-                        <button type="submit" class="btn btn-primary w-100">Actualizar</button>
+                        <div class="mb-3">
+                            <label>{{ form.tipo.label }}</label>
+                            {% for radio in form.tipo %}
+                                <div class="form-check">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label">{{ radio.choice_label }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{form.habilitado.label_tag}}
+                            {{form.habilitado}}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Agregar</button>
                     </form>
                 </div>
             </div>

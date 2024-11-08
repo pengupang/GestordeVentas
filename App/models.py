@@ -17,7 +17,7 @@ class Empleado(models.Model):
     contrasena = models.CharField(max_length=128)
     genero = models.CharField(max_length=10, choices=[('M', 'Masculino'), ('F', 'Femenino')])
     edad = models.IntegerField()
-    tipo = models.CharField(max_length=10, choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')])
+    tipo = models.CharField(max_length=10, choices=[('Manager', 'Manager'), ('Bodeguero', 'Bodeguero'),('Vendedor', 'Vendedor')])
     habilitado = models.BooleanField(default=True)
 
 class Producto(models.Model):

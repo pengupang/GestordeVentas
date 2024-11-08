@@ -16,7 +16,9 @@ def inicio (request):
 View Empleados 
 """
 def empleados (request):
-    return render (request,'empleados_ver.html')
+    empleado = Empleado.objects.filter(habilitado=True)
+    return render(request, 'empleados_ver.html', {'empleado': empleado})
+
 
 def agregar_empleado(request):
     form = EmpleadoForm()
@@ -25,7 +27,7 @@ def agregar_empleado(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Empleado Ingresado')
-            return redirect('empleados_agregar/') 
+            return redirect('../empleados_ver/') 
         else:
             messages.error(request, 'Error empleado no ingresado')
     data = {'form': form }
