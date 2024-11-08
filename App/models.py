@@ -2,11 +2,13 @@ from django.db import models
 
 # Create your models here.
 class Proveedor(models.Model):
-    Nombre = models.CharField (max_length=60)
+    Nombre = models.CharField (max_length=60,null=False)
     Representante = models.CharField (max_length=80)
     Contacto = models.CharField (max_length= 14)
     habilitado = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.Nombre
 
 class Empleado(models.Model):
     nombre = models.CharField(max_length=100)
@@ -20,12 +22,18 @@ class Empleado(models.Model):
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=50)
-    cantidad = models.IntegerField()
+    cantidad = models.IntegerField(default=0)
     precio = models.IntegerField()
     habilitado = models.BooleanField(default=True)
+    def __str__(self):
+        return self.nombre
 
 class Compra(models.Model):
-    producto = models.CharField(max_length=50)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT,null= False, related_name='proveedor_compras')
     cantidad = models.IntegerField()
     precio = models.IntegerField()
+    producto= models.ForeignKey(Producto,on_delete=models.PROTECT, related_name='producto_compras') 
+    habilitado = models.BooleanField(default=True)
+    def __str__(self):
+        return f"{self.producto} - {self.proveedor.Nombre}"
     

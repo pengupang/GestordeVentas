@@ -20,7 +20,8 @@
                         <th>Acciones</th>
                         <th>Proveedor</th>
                         <th>N° guia</th>
-                        <th>Productos</th>
+                        <th>Producto</th>
+                        <th>Precio total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,12 +29,13 @@
                     <tr>
                         <td>
                             <a href="#" class="nav-item"><i class="bi bi-pencil"></i></a> 
-                            <a href="{% url 'compra_deshabilitar' %}" class="nav-item" title="Deshabilitar">
+                            <a href="{% url 'deshabilitar_compra' compras.id %}" class="nav-item" title="Deshabilitar">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </a>
                         </td>
-                        <td>{{ compras.producto}}</td>
-                        <td>{{ compras.cantidad }}</td>
+                        <td>{{ compras.proveedor}}</td>
+                        <td>{{ compras.id }}</td>
+                        <td>{{ compras.producto }}</td>
                         <td>{{ compras.precio }}</td>
                     </tr>
                     {% endfor %}

@@ -27,11 +27,11 @@
                     <tr>
                         <td>
                             <a href="#" class="nav-item"><i class="bi bi-pencil"></i></a> 
-                            <a href="{% url 'deshabilitar_producto' %}" class="nav-item" title="Deshabilitar">
+                            <a href="{% url 'deshabilitar_producto' producto.id %}" class="nav-item" title="Deshabilitar">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </a>
                         </td>
-                        <td>{{ producto.producto }}</td>
+                        <td>{{ producto.nombre }}</td>
                         <td>{{ producto.cantidad }}</td>
                         <td>{{ producto.precio }}</td>
                     </tr>

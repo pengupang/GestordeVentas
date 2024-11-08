@@ -6,47 +6,104 @@
             <div class="col-lg-6">
                 <ul class="nav nav-tabs">
                     <li class="nav-item"><a href="../inventario_ver/" class="nav-link "> Ver</a></li>
-                    <li class="nav-item "><a href="../inventario_compra/" class="nav-link active"> Agregar</a></li>  
+                    <li class="nav-item "><a href="../inventario_compras/" class="nav-link active"> Agregar</a></li>  
                 </ul>
                 <div class="card shadow-lg p-4">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a href="../producto_agregar/" class="nav-link  "> Producto</a></li>
+                        <li class="nav-item "><a href="../inventario_compras" class="nav-link active"> Compras</a></li>  
+                    </ul>
                     <h3 class="text-center mb-4">{{titulo}}</h3>
                     <form method="POST" action="#">
+                        {% csrf_token %}
                         <div class="mb-3">
-                            <label for="firstName" class="form-label">Nombre Proveedor</label>
-                            <select class="form-select" id="Proveedor" name="proveedor" required>
-                            </select>
+                            {{ form.proveedor.label_tag }}
+                            {{ form.proveedor }}  
                         </div>
                         <div class="mb-3">
-                            <label for="lastName" class="form-label">Orden de compra</label>
-                            <input type="text" class="form-control" id="orden" name="orden" placeholder="N° Orden de compra" required>
+                            <label for="orden" class="form-label">Orden de compra</label>
+                            <input type="text" class="form-control" id="orden" name="orden" value="{{ next_id }}" placeholder="N° Orden de compra" readonly required>
                         </div>
                         <div class="mb-3">
-        
-                                <div class="row g-3 align-items-center producto-item">
+                                <div class="row g-3 align-items-end producto-item">
+                               
+                                  
                                     <div class="col-md-6">
-                                        <div class="col-md-2">
-                                            <label for="precio{{ producto.id }}" class="form-label">producto</label>
-                                            <select type="number" class="form-control" name="precio{{ producto.id }}" value="{{ producto.precio }}" min="0">
-                                            </select>
+                                        <div class="form-group">
+                                            <label>Productos:</label>
+                                            {{form.producto}}
                                         </div>
+                                 
+                                </div>
+                                    <div class="col-md-2">
+                                        <label for="id_precio" class="form-label">Precio</label>
+                                        <input type="number" class="form-control" name="precio" id="id_precio" value="0" min="0"  readonly>
                                     </div>
                                     <div class="col-md-2">
-                                        <label for="precio{{ producto.id }}" class="form-label">Precio</label>
-                                        <input type="number" class="form-control" name="precio{{ producto.id }}" value="{{ producto.precio }}" min="0">
+                                        <label for="id_cantidad" class="form-label">Cantidad</label>
+                                        <input type="number" class="form-control" name="cantidad" value="1" min="1" id="id_cantidad">
                                     </div>
-                                    <div class="col-md-2">
-                                        <label for="cantidad{{ producto.id }}" class="form-label">Cantidad</label>
-                                        <input type="number" class="form-control" name="cantidad{{ producto.id }}" min="1">
-                                    </div>
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-success" id="addProductBtn">+ Add Product</button>
-                                    </div>
+                     
                             
                                     <div class="mt-4">
                                         <button type="submit" class="btn btn-primary">Comprar</button>
                                     </div>
-                    
+                                </div>
+                            </div>
                             </form>
+                            <!-- script para elegir un precio base al momento de elegir un producto  -->
+                            <script>
+                                // event listener para que el script se cargue apenas carguen los componentes input
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    //array con los productos parseados para que tengan nombre y precio segun la id
+                                    const productos = [
+                                        {% for producto in productos %}
+                                            {
+                                                id: {{ producto.id }},
+                                                nombre: "{{ producto.nombre|escapejs }}",
+                                                precio: {{ producto.precio }}
+                                            }{% if not forloop.last %},{% endif %}
+                                        {% endfor %}
+                                    ];
+                                        // llamado de los inputs con las ids que concuerdan
+                                    const productoSelect = document.getElementById("id_producto");
+                                    const cantidadInput = document.getElementById("id_cantidad");
+                                    const precioInput = document.getElementById("id_precio");
+                                
+                                    if (productoSelect && cantidadInput && precioInput) {
+                    
+                                        productoSelect.addEventListener("change", function () {
+                                            const productoId = parseInt(productoSelect.value);
+                                            // funcion para encontrar el producto segun la id seleccionada en el input select
+                                            const producto = productos.find(p => p.id === productoId);
+                                            // comprobacion en caso de que cantidad tenga un dato antes de elegir un producto
+                                            if (producto) {
+                                                if(parseInt(cantidadInput.value)>0){
+                                                    precioInput.value = producto.precio * parseInt(cantidadInput.value || 0);
+                                                }else{
+                                                    precioInput.value = producto.precio;
+                                                }
+                                           
+                                            } else {
+                                                precioInput.value = 0;
+                                            }
+                                        });
+                                
+                                        // event listener para cuando cantidad cambie de numero se calcule el precio total de la compra
+                                        cantidadInput.addEventListener("input", function () {
+                                            const productoId = parseInt(productoSelect.value);
+                                            const producto = productos.find(p => p.id === productoId);
+                                            if (producto) {
+                                                precioInput.value = producto.precio * parseInt(cantidadInput.value || 0);
+                                            } else {
+                                                precioInput.value = 0;
+                                            }
+                                        });
+                                    } else {
+                                        console.error("Uno o más elementos con ID 'id_producto', 'id_cantidad', o 'id_precio' no se encontraron en el DOM.");
+                                    }
+                                });
+                                </script>
                           </div>
                     
             </div>

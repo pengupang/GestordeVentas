@@ -64,11 +64,24 @@ def actualizar_inventario(request,id):
     data={'form':form,'titulo':'Actualizar Inventario'}
     return render(request,'inventario_ver.html',data)
 
+def agregar_producto(request):
+    form = ProductoForm()
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Producto Ingresado')
+            return redirect('../producto_agregar/') 
+        else:
+            messages.error(request, 'Error producto no ingresado')
+    data = {'form': form }
+    return render(request,'producto_agregar.html',data)
+
 def deshabilitar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.habilitado = False
     producto.save()
-    messages.success(request, f'Producto {producto.producto} deshabilitado.')
+    messages.success(request, f'Producto {producto.nombre} deshabilitado.')
     return redirect('inventario_ver') 
 
 """
@@ -81,7 +94,7 @@ def proveedores_ingresar(request):
         if form.is_valid():
             form.save()
             messages.success(request,'Proveedor Ingresado')
-            return redirect('proveedor_ver/')
+            return redirect('../proveedor_ver/')
         else:
             messages.error(request,'Error proveedor no ingresado') # Mensaje el cual saldra cuando se meta un Proovedor
     data = {'form': form }
@@ -115,20 +128,34 @@ def actualizar_proveedor(request, proveedor_id):
 """
 View Compras 
 """
-def compra_Agregar(request):
-    if request.method == 'POST':
+def compra_agregar(request):
+    last_compra = Compra.objects.order_by('id').last()
+    next_id = last_compra.id + 1 if last_compra else 1
+
+    if request.method == "POST":
+        if next_id == Compra.objects.order_by('id').last().id:
+            next_id+=1
         form = CompraForm(request.POST)
         if form.is_valid():
-            form.save()  
-            return redirect('compras_ver')  
-    else:
-        form = CompraForm()
-    
-    return render(request, 'inventario_compras.html', {'form': form, 'titulo':'ingresar Compra'})
+            form.instance.orden = next_id
+            form.save()
+            return redirect('compras_ver')
+
+    form = CompraForm()
+
+    productos = Producto.objects.all()
+
+    context = {
+        'form': form,
+        'titulo': 'Agregar Compra',
+        'productos': productos,
+        'next_id': next_id,
+    }
+    return render(request, 'inventario_compras.html', context)
 
 def compras_Ver (request):
-    compra = Compra.objects.all()
-    data = {'compra':compra}
+    compras = Compra.objects.filter(habilitado=True)
+    data = {'compra':compras}
     return render(request,'compras_ver.html',data)
 
 def compra_deshabilitar(request,compra_id):
@@ -148,6 +175,8 @@ def compra_editar(request,id):
         return compras_Ver(request)
     data={'form':form,'titulo':'Actualizar Compra'}
     return render(request,'inventario_compras.html',data)
+
+
 
 #def eliminar_proveedor(request, id):
 #    proveedor = get_object_or_404(Proveedor, id = id)

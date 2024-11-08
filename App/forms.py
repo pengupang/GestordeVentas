@@ -25,15 +25,7 @@ class EmpleadoForm(forms.ModelForm):
             'tipo': forms.RadioSelect(attrs={'class': 'form-check-input'},choices=[('Manager', 'Manager'), ('Empleado', 'Empleado')]),
         }
 
-class CompraForm(forms.ModelForm):
-    class Meta:
-        model = Compra
-        fields = '__all__'
-        widgets = {
-            'producto': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
-            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
-        }
+
 
 class ProductoForm (forms.ModelForm):
     class Meta:
@@ -45,4 +37,16 @@ class ProductoForm (forms.ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
 
 
+        }
+class CompraForm(forms.ModelForm):
+
+    class Meta:
+        model = Compra
+        fields = ['proveedor', 'producto', 'cantidad', 'precio']
+        widgets = {
+            #las ids son para correr el script de javascript de manera correcta
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad' ,'id':'id_cantidad'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio', 'id':'id_precio','readonly': 'readonly'}),
+            'proveedor': forms.Select(attrs={'class': 'form-select', 'required': 'required'}),
+            'producto': forms.Select(attrs={'class': 'form-select', 'required': 'required' , 'id':'id_producto'})
         }
