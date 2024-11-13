@@ -25,6 +25,8 @@ class Producto(models.Model):
     cantidad = models.IntegerField(default=0)
     precio = models.IntegerField()
     habilitado = models.BooleanField(default=True)
+    imagen = models.ImageField(upload_to="imgProducts/")
+
     def __str__(self):
         return self.nombre
 

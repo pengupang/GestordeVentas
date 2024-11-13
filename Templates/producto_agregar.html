@@ -16,7 +16,7 @@
                         <li class="nav-item "><a href="../inventario_compras" class="nav-link "> Compras</a></li>  
                     </ul>
                     <h3 class="text-center mb-4">Agregar Producto</h3>
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{form.as_p}}
                         

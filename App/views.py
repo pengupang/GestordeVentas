@@ -69,11 +69,11 @@ def actualizar_inventario(request,id):
 def agregar_producto(request):
     form = ProductoForm()
     if request.method == 'POST':
-        form = ProductoForm(request.POST)
+        form = ProductoForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'Producto Ingresado')
-            return redirect('../producto_agregar/') 
+            return redirect('../inventario_ver/') 
         else:
             messages.error(request, 'Error producto no ingresado')
     data = {'form': form }

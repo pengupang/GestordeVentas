@@ -47,8 +47,8 @@ class ProductoForm (forms.ModelForm):
         widgets = {
             'nombre':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'})
-
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}),
+            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control', 'placeholder': 'Imagen de producto'})
 
         }
 class CompraForm(forms.ModelForm):
@@ -58,8 +58,12 @@ class CompraForm(forms.ModelForm):
         fields = ['proveedor', 'producto', 'cantidad', 'precio']
         widgets = {
             #las ids son para correr el script de javascript de manera correcta
-            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad' ,'id':'id_cantidad'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio', 'id':'id_precio','readonly': 'readonly'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad' ,'id':'id_cantidad','required': 'required'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio', 'id':'id_precio','required': 'required'}),
             'proveedor': forms.Select(attrs={'class': 'form-select', 'required': 'required'}),
             'producto': forms.Select(attrs={'class': 'form-select', 'required': 'required' , 'id':'id_producto'})
         }
+    def __init__(self, *args, **kwargs):
+        super(CompraForm, self).__init__(*args, **kwargs)
+        self.fields['producto'].queryset = Producto.objects.filter(habilitado=True)
+        self.fields['proveedor'].queryset = Proveedor.objects.filter(habilitado=True)
