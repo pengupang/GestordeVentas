@@ -26,6 +26,12 @@ class Producto(models.Model):
     precio = models.IntegerField()
     habilitado = models.BooleanField(default=True)
     imagen = models.ImageField(upload_to="imgProducts/")
+    descuento = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)  # Porcentaje de descuento, e.g., 10.0 para 10%
+
+    def precio_con_descuento(self):
+        if self.descuento > 0:
+            return self.precio * (1 - self.descuento / 100)
+        return self.precio
 
     def __str__(self):
         return self.nombre

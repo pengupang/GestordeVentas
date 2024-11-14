@@ -1,0 +1,47 @@
+{%load static%}
+{%include 'header.html'%}
+<div class="col-md-10">
+    <div class="container mt-5">
+        <div class="container my-4">
+            <h1 class="text-center">Carrito de Compras</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Descuento</th>
+                        <th>Precio Final</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in productos_carrito %}
+                        <tr>
+                            <td>{{ item.producto.nombre }}</td>
+                            <td>
+                                <!-- Botones para aumentar y disminuir la cantidad -->
+                                <a href="{% url 'disminuir_del_carrito' item.producto.id %}" class="btn btn-sm btn-danger">-</a>
+                                {{ item.cantidad }}
+                                <a href="{% url 'agregar_al_carrito' item.producto.id %}" class="btn btn-sm btn-success">+</a>
+                            </td>
+                            <td>${{ item.precio_unitario }}</td>
+                            <td>
+                                {% if item.descuento > 0 %}
+                                    {{ item.descuento }}% OFF
+                                {% else %}
+                                    No aplica
+                                {% endif %}
+                            </td>
+                            <td> </td>
+                            <td>
+                                <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3 class="text-right">Total: ${{ total }}</h3>
+        </div>
+</div></div>
+</div>

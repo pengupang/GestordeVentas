@@ -5,25 +5,37 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-10">
-                <h3>Catálogo</h3>
-                <input type="text" class="form-control search-bar" placeholder="Buscar...">
+                <!-- Barra de búsqueda -->
             </div>
-        </div>
-        <div class="row" id="catalogo">
-            <!-- Elementos iniciales del catálogo -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="catalogo-item">
-                    <img src="https://via.placeholder.com/150" alt="Producto 1" class="img-fluid">
+            <form method="get" action="{% url 'catalogo' %}" class="my-3">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar producto..." value="{{ request.GET.q }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                    
                 </div>
+            </form>
+            <div class="input-group-append">
+                <a class="btn btn-success" href="../carrito">Carrito</a>
             </div>
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="catalogo-item">
-                    <img src="https://via.placeholder.com/150" alt="Producto 2" class="img-fluid">
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="catalogo-item">
-                    <img src="https://via.placeholder.com/150" alt="Producto 3" class="img-fluid">
+                <!-- Listado de productos en cards -->
+                <div class="row">
+                    {% for producto in productos %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                                    <p class="card-text">Precio: ${{ producto.precio }}</p>
+                                    <p class="card-text">{{ producto.descripcion }}</p>
+                                    <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">Agregar al carrito</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center">No se encontraron productos.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

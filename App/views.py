@@ -44,8 +44,60 @@ def deshabilitar_empleado(request, empleado_id):
 """
 View Catalago 
 """
-def catalogo (request):
-    return render(request,'catalogo.html')
+def catalogo_view(request):
+    query = request.GET.get('q')
+    if query:
+        productos = Producto.objects.filter(nombre__icontains=query, habilitado=True)
+    else:
+        productos = Producto.objects.filter(habilitado=True)
+    
+    return render(request, 'catalogo.html', {'productos': productos})
+
+def agregar_al_carrito(request, producto_id):
+    carrito = request.session.get('carrito', {})
+    carrito[producto_id] = carrito.get(producto_id, 0) + 1  # Incrementa la cantidad del producto
+    request.session['carrito'] = carrito
+    return redirect('carrito')  # Redirige al carrito después de agregar
+
+def disminuir_del_carrito(request, producto_id):
+    carrito = request.session.get('carrito', {})
+    if producto_id in carrito:
+        if carrito[producto_id] > 1:
+            carrito[producto_id] -= 1  # Disminuye la cantidad del producto
+        else:
+            del carrito[producto_id]  # Elimina el producto si la cantidad es 0
+    request.session['carrito'] = carrito
+    return redirect('carrito')
+
+def ver_carrito(request):
+    carrito = request.session.get('carrito', {})  # Suponiendo que el carrito se guarda en la sesión
+    productos_carrito = []
+
+    # Recolecta productos en el carrito
+    for producto_id, cantidad in carrito.items():
+        producto = Producto.objects.get(id=producto_id)
+        precio_final = producto.precio_con_descuento()
+        productos_carrito.append({
+            'producto': producto,
+            'cantidad': cantidad,
+            'precio_unitario': producto.precio,
+            'precio_final': precio_final,
+            'descuento': producto.descuento,
+        })
+
+    # Calcular el total del carrito
+    total = sum(item['precio_final'] * item['cantidad'] for item in productos_carrito)
+
+    return render(request, 'carrito.html', {'productos_carrito': productos_carrito, 'total': total})
+
+def eliminar_del_carrito(request, producto_id):
+    carrito = request.session.get('carrito', {})
+    
+    if str(producto_id) in carrito:
+        del carrito[str(producto_id)]
+    
+    request.session['carrito'] = carrito
+    return redirect('ver_carrito')
 
 """
 View Inventario 
