@@ -52,17 +52,18 @@ class ProductoForm (forms.ModelForm):
 
         }
 class CompraForm(forms.ModelForm):
+    fecha = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))  # Agregar este campo
 
     class Meta:
         model = Compra
-        fields = ['proveedor', 'producto', 'cantidad', 'precio']
+        fields = ['proveedor', 'producto', 'cantidad', 'precio', 'fecha']
         widgets = {
-            #las ids son para correr el script de javascript de manera correcta
-            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad' ,'id':'id_cantidad','required': 'required'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio', 'id':'id_precio','required': 'required'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad', 'id': 'id_cantidad', 'required': 'required'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio', 'id': 'id_precio', 'required': 'required'}),
             'proveedor': forms.Select(attrs={'class': 'form-select', 'required': 'required'}),
-            'producto': forms.Select(attrs={'class': 'form-select', 'required': 'required' , 'id':'id_producto'})
+            'producto': forms.Select(attrs={'class': 'form-select', 'required': 'required', 'id': 'id_producto'}),
         }
+
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
         self.fields['producto'].queryset = Producto.objects.filter(habilitado=True)

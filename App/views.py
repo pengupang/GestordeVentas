@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from App.models import Proveedor, Empleado, Compra,Producto,Venta
+from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
 
 
@@ -235,24 +235,45 @@ def compra_editar(request,id):
 View Reportes
 """
 
+
 def generar_reporte(request):
+    reportes = []
+
     if request.method == 'POST':
         fecha_inicio = request.POST.get('fecha_inicio')
         fecha_final = request.POST.get('fecha_final')
         tipo_reporte = request.POST.get('tipo_reporte')
-        
+
         # Filtrar las compras y ventas según las fechas
         if tipo_reporte == 'compra':
             reportes = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])
         elif tipo_reporte == 'venta':
             reportes = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
-        else:
-            reportes = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final]) | Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
+        elif tipo_reporte == 'ambos':
+            reportes = list(Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])) + list(Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final]))
 
-        # Aquí podrías generar un archivo CSV, PDF, o simplemente retornar los datos
-        return render(request, 'reporte.html', {'reportes': reportes})
+        # Guardar los resultados en la sesión
+        request.session['reportes'] = [reporte.id for reporte in reportes]
 
-    return render(request, 'reportes.html')
+    else:
+        # Recuperar los resultados de la sesión
+        if 'reportes' in request.session:
+            reportes_ids = request.session['reportes']
+            reportes_compras = Compra.objects.filter(id__in=reportes_ids)
+            reportes_ventas = Venta.objects.filter(id__in=reportes_ids)
+            reportes = list(reportes_compras) + list(reportes_ventas)
+
+    return render(request, 'reportes.html', {'reportes': reportes})
+
+
+
+
+
+
+
+
+
+
 #def eliminar_proveedor(request, id):
 #    proveedor = get_object_or_404(Proveedor, id = id)
 #    if request.method == 'POST':

@@ -37,14 +37,17 @@ class Producto(models.Model):
         return self.nombre
 
 class Compra(models.Model):
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT,null= False, related_name='proveedor_compras')
+    fecha = models.DateField(null=True)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT, null=False, related_name='proveedor_compras')
     cantidad = models.IntegerField()
     precio = models.IntegerField()
-    producto= models.ForeignKey(Producto,on_delete=models.PROTECT, related_name='producto_compras') 
+    producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name='producto_compras')
     habilitado = models.BooleanField(default=True)
     tipo = models.CharField(max_length=50, default='compra')
+
     def __str__(self):
         return f"{self.producto} - {self.proveedor.Nombre}"
+
     
 class Venta(models.Model):
         fecha = models.DateField()
@@ -57,4 +60,19 @@ class Venta(models.Model):
         def total(self):
             """Método para calcular el total de la venta (cantidad * precio_unitario)."""
             return self.cantidad * self.precio_unitario
+
+
+class Reporte(models.Model):
+    fecha_generacion = models.DateTimeField(auto_now_add=True)
+    fecha_inicio = models.DateField()
+    fecha_final = models.DateField()
+    tipo_reporte = models.CharField(max_length=50)
+    detalles = models.TextField(blank=True, null=True)
+    compras = models.ManyToManyField(Compra, blank=True)
+    ventas = models.ManyToManyField(Venta, blank=True)
+
+    def __str__(self):
+        return f"Reporte {self.id} - {self.tipo_reporte} ({self.fecha_inicio} a {self.fecha_final})"
+
+
             
