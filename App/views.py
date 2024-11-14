@@ -187,8 +187,8 @@ def compra_agregar(request):
     next_id = last_compra.id + 1 if last_compra else 1
 
     if request.method == "POST":
-        if next_id == Compra.objects.order_by('id').last().id:
-            next_id+=1
+        if last_compra and next_id == Compra.objects.order_by('id').last().id:
+            next_id += 1
         form = CompraForm(request.POST)
         if form.is_valid():
             form.instance.orden = next_id
@@ -206,6 +206,7 @@ def compra_agregar(request):
         'next_id': next_id,
     }
     return render(request, 'inventario_compras.html', context)
+
 
 def compras_Ver (request):
     compras = Compra.objects.filter(habilitado=True)
