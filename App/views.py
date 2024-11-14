@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from App.models import Proveedor, Empleado, Compra,Producto
+from App.models import Proveedor, Empleado, Compra,Producto,Venta
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
 
 
@@ -230,8 +230,28 @@ def compra_editar(request,id):
     data={'form':form,'titulo':'Actualizar Compra'}
     return render(request,'inventario_compras.html',data)
 
+"""
+View Reportes
+"""
 
+def generar_reporte(request):
+    if request.method == 'POST':
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_final = request.POST.get('fecha_final')
+        tipo_reporte = request.POST.get('tipo_reporte')
+        
+        # Filtrar las compras y ventas según las fechas
+        if tipo_reporte == 'compra':
+            reportes = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])
+        elif tipo_reporte == 'venta':
+            reportes = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
+        else:
+            reportes = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final]) | Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
 
+        # Aquí podrías generar un archivo CSV, PDF, o simplemente retornar los datos
+        return render(request, 'reporte.html', {'reportes': reportes})
+
+    return render(request, 'reportes.html')
 #def eliminar_proveedor(request, id):
 #    proveedor = get_object_or_404(Proveedor, id = id)
 #    if request.method == 'POST':

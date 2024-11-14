@@ -42,6 +42,19 @@ class Compra(models.Model):
     precio = models.IntegerField()
     producto= models.ForeignKey(Producto,on_delete=models.PROTECT, related_name='producto_compras') 
     habilitado = models.BooleanField(default=True)
+    tipo = models.CharField(max_length=50, default='compra')
     def __str__(self):
         return f"{self.producto} - {self.proveedor.Nombre}"
     
+class Venta(models.Model):
+        fecha = models.DateField()
+        detalles = models.TextField()  # Información sobre los productos vendidos
+        tipo = models.CharField(max_length=50, default='venta')
+        producto = models.CharField(max_length=100)  # Ejemplo: nombre del producto
+        cantidad = models.IntegerField()  # Ejemplo: cantidad vendida
+        precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)  # Precio por unidad
+
+        def total(self):
+            """Método para calcular el total de la venta (cantidad * precio_unitario)."""
+            return self.cantidad * self.precio_unitario
+            

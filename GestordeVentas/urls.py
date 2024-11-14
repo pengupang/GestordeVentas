@@ -26,11 +26,13 @@ urlpatterns = [
     path('',views.login),
     path('empleados_ver/',views.empleados),
     path('empleados_agregar/',views.agregar_empleado),
+
     path('catalogo/',views.catalogo_view,name= 'catalogo'),
      path('carrito/', views.ver_carrito, name='carrito'),
      path('agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('disminuir/<int:producto_id>/', views.disminuir_del_carrito, name='disminuir_del_carrito'),
     path('eliminar/<int:producto_id>/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
+
     path('compras_ver/', views.compras_Ver, name='compras_ver'),
     path('compras_ver/deshabilitar/<int:compra_id>',views.compra_deshabilitar, name='deshabilitar_compra'),
     path('inventario_compras/<int:id>', views.compra_editar, name='inventario_compras'),
@@ -41,7 +43,8 @@ urlpatterns = [
     path('proveedor_ver/',views.proveedores_ver),
     path('proveedor_ingresar/',views.proveedores_ingresar),
     path('proveedor/deshabilitar/<int:proveedor_id>/', views.deshabilitar_proveedor, name='deshabilitar_proveedor'),
-    path('proveedor/actualizar/<int:proveedor_id>/', views.actualizar_proveedor, name='actualizar_proveedor')
+    path('proveedor/actualizar/<int:proveedor_id>/', views.actualizar_proveedor, name='actualizar_proveedor'),
+    path('generar-reporte/', views.generar_reporte, name='generar_reporte'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
