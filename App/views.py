@@ -26,10 +26,10 @@ def agregar_empleado(request):
         form = EmpleadoForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Empleado Ingresado')
+            messages.success(request, 'Empleado Ingresado') #Mensaje de empleado ingresado
             return redirect('../empleados_ver/') 
         else:
-            messages.error(request, 'Error empleado no ingresado')
+            messages.error(request, 'Error empleado no ingresado') # Mensaje de error
     data = {'form': form }
     return render(request,'empleados_agregar.html',data)
 
@@ -114,7 +114,10 @@ def actualizar_inventario(request,id):
         form=ProductoForm(request.POST,instance=productos)
         if form.is_valid():
             form.save()
-        return inventario_ver(request)
+            messages.success(request, 'Inventario Actualizado') # Mensaje de Inventario actualizado
+            return inventario_ver(request)
+        else:
+            messages.error(request, 'Error Inventario no actualizado')
     data={'form':form,'titulo':'Actualizar Inventario'}
     return render(request,'inventario_ver.html',data)
 
@@ -124,10 +127,10 @@ def agregar_producto(request):
         form = ProductoForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Producto Ingresado')
+            messages.success(request, 'Producto Ingresado') # Mensaje de producto ingresado
             return redirect('../inventario_ver/') 
         else:
-            messages.error(request, 'Error producto no ingresado')
+            messages.error(request, 'Error producto no ingresado') # Mensaje de error
     data = {'form': form }
     return render(request,'producto_agregar.html',data)
 
@@ -173,6 +176,7 @@ def actualizar_proveedor(request, proveedor_id):
         form = ProveedorForm(request.POST, instance=proveedor)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Proveedor Actualizado')
             return redirect('lista_proveedores')  # Redirige a la lista de proveedores después de actualizar
     else:
         form = ProveedorForm(instance=proveedor)
@@ -192,7 +196,8 @@ def compra_agregar(request):
         form = CompraForm(request.POST)
         if form.is_valid():
             form.instance.orden = next_id
-            form.save()
+            form.save() 
+            messages.success(request, 'Producto agregado.') # Mensaje de producto agregado
             return redirect('compras_ver')
 
     form = CompraForm()
