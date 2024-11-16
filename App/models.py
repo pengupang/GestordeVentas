@@ -27,6 +27,8 @@ class Producto(models.Model):
     habilitado = models.BooleanField(default=True)
     imagen = models.ImageField(upload_to="imgProducts/")
     descuento = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)  # Porcentaje de descuento, e.g., 10.0 para 10%
+    actualizado_por = models.CharField(max_length=100, null=True, blank=True)
+    razon_actualizacion = models.TextField(null=True, blank=True)
 
     def precio_con_descuento(self):
         if self.descuento > 0:
@@ -75,4 +77,12 @@ class Reporte(models.Model):
         return f"Reporte {self.id} - {self.tipo_reporte} ({self.fecha_inicio} a {self.fecha_final})"
 
 
-            
+class HistorialInventario(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    tipo = models.CharField(max_length=10, choices=[('entrada', 'Entrada'), ('salida', 'Salida')])
+    fecha = models.DateTimeField(auto_now_add=True)
+    detalle = models.TextField()
+
+    def __str__(self):
+        return f"{self.tipo} - {self.producto.nombre} - {self.cantidad}"           

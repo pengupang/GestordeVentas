@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte
+from django.http import JsonResponse
+from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
 
 
@@ -107,19 +108,28 @@ def inventario_ver(request):
     productos = Producto.objects.filter(habilitado=True)
     return render(request, 'inventario_ver.html', {'productos': productos})
 
-def actualizar_inventario(request,id):
-    productos=Producto.objects.get(id=id)
-    form=ProductoForm(instance= productos)
-    if request.method=="POST":
-        form=ProductoForm(request.POST,instance=productos)
+def actualizar_inventario(request, id):
+    producto = get_object_or_404(Producto, id=id)
+    form = ProductoForm(instance=producto)
+
+    if request.method == "POST":
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Inventario Actualizado') # Mensaje de Inventario actualizado
-            return inventario_ver(request)
+            producto = form.save(commit=False)
+            producto.actualizado_por = request.user.username  # Registrar el usuario que hizo el cambio
+            producto.razon_actualizacion = form.cleaned_data['razon_actualizacion']  # Registrar la razón
+            producto.save()
+            messages.success(request, 'Inventario actualizado correctamente.')
+            return redirect('inventario_ver')
         else:
-            messages.error(request, 'Error Inventario no actualizado')
-    data={'form':form,'titulo':'Actualizar Inventario'}
-    return render(request,'inventario_ver.html',data)
+            messages.error(request, 'Error al actualizar el inventario.')
+
+    return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
+
+def historial_inventario(request):
+    # Obtener todo el historial (entradas y salidas)
+    historial = HistorialInventario.objects.all().order_by('-fecha')  # Ordenar por fecha descendente
+    return render(request, 'historial_inventario.html', {'historial': historial})
 
 def agregar_producto(request):
     form = ProductoForm()
@@ -141,6 +151,21 @@ def deshabilitar_producto(request, producto_id):
     messages.success(request, f'Producto {producto.nombre} deshabilitado.')
     return redirect('inventario_ver') 
 
+def reducir_cantidad_producto(request, producto_id, cantidad):
+    """
+    Reduce la cantidad de un producto en el inventario.
+    """
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if cantidad > producto.cantidad:
+        messages.error(request, f"La cantidad a reducir ({cantidad}) excede el stock disponible ({producto.cantidad}).")
+        return JsonResponse({'error': 'Cantidad excede el stock disponible'}, status=400)
+
+    producto.cantidad -= cantidad
+    producto.save()
+    
+    messages.success(request, f"Se redujeron {cantidad} unidades del producto '{producto.nombre}'.")
+    return JsonResponse({'message': 'Cantidad reducida exitosamente', 'nueva_cantidad': producto.cantidad})
 """
 View Proveedores 
 """

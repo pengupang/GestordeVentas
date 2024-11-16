@@ -40,16 +40,26 @@ class EmpleadoForm(forms.ModelForm):
 
 
 
-class ProductoForm (forms.ModelForm):
+class ProductoForm(forms.ModelForm):
+    razon_actualizacion = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Razón de la actualización',
+            'rows': 3
+        }),
+        required=True,
+        label="Razón de la actualización"
+    )
+
     class Meta:
         model = Producto
         fields = '__all__'
         widgets = {
-            'nombre':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}),
-            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control', 'placeholder': 'Imagen de producto'})
-
+            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control', 'placeholder': 'Imagen de producto'}),
+            'habilitado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 class CompraForm(forms.ModelForm):
     fecha = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))  # Agregar este campo
