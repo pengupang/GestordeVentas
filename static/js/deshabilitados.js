@@ -43,13 +43,12 @@ const initDataTable = async () => {
  */
 const listaProducto = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:8000/listaProductos/');
+        const response = await fetch('http://127.0.0.1:8000/deshabilitados/');
         const data = await response.json();
         console.log(data); 
         let content = '';
         data.productos.forEach((producto, index) => {
-            const deshabilitarUrl = deshabilitarUrlTemplate.replace("0", producto.id);
-            const actualizarUrl = actualizarUrlTemplate.replace("0", producto.id);
+            const habilitarUrl = habilitarUrlTemplate.replace("0", producto.id);
             content += `
                 <tr>
                     <td>${index + 1}</td>
@@ -57,13 +56,9 @@ const listaProducto = async () => {
                     <td>${producto.cantidad}</td>
                     <td>${producto.precio}</td>
                     <td>
-                        <!-- Botón para editar, redirige a la vista de edición -->
-                        <a href="${actualizarUrl}" class='btn btn-warning'>
-                            <i class="bi bi-pencil"></i>
-                        </a>
                         <!-- Botón para deshabilitar, redirige a la vista de deshabilitación con confirmación -->
-                        <a href="${deshabilitarUrl}" class='btn btn-danger' onclick="return confirm('¿Estás seguro de deshabilitar este producto?');">
-                            <i class="bi bi-x-circle"></i>
+                        <a href="${habilitarUrl}" class='btn btn-success' onclick="return confirm('¿Estás seguro de Habilitar este producto?');">
+                            <i class="bi bi-check-circle"></i>
                         </a>
                     </td>
                 </tr>

@@ -104,9 +104,26 @@ def eliminar_del_carrito(request, producto_id):
 View Inventario 
 """
 
+
+def deshabilitados_ver (request):
+    return render(request, 'productosDeshabilitados.html')
+
+def listaDeshabilitados (request):
+
+    productos = Producto.objects.filter(habilitado= False)  # Filtra solo los productos Desactivados
+    productos_data = [
+        {
+            'id': producto.id,
+            'nombre': producto.nombre,
+            'cantidad': producto.cantidad,
+            'precio': producto.precio,
+        }
+        for producto in productos
+    ]
+    return JsonResponse({'productos': productos_data})
+
 def inventario_ver(request):
-    productos = Producto.objects.filter(habilitado=True)
-    return render(request, 'inventario_verP.html', {'productos': productos})
+    return render(request, 'inventario_verP.html')
 
 def lista_productos(request):
     productos = Producto.objects.filter(habilitado= True)  # Filtra solo los productos activos
@@ -163,6 +180,13 @@ def deshabilitar_producto(request, producto_id):
     producto.save()
     messages.success(request, f'Producto {producto.nombre} deshabilitado.')
     return redirect('inventario_ver') 
+
+def habilitar_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    producto.habilitado = True
+    producto.save()
+    messages.success(request, f'Producto {producto.nombre} habilitado.')
+    return redirect('ver_deshabilitadosP') 
 
 def reducir_cantidad_producto(request, producto_id, cantidad):
     """

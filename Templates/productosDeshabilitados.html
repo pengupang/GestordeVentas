@@ -1,9 +1,8 @@
 {% load static %}
 {% include 'header.html' %}
 <script>
-    const baseDeshabilitarUrl = "{% url 'deshabilitar_producto' 0 %}";
+    const baseHabilitarUrl = "{% url 'habilitar' 0 %}";
 </script>
-
 <div id="main-content" class="col-md-10 ms-auto">
     <div class="content-container p-3">
         <ul class="nav nav-tabs">
@@ -14,16 +13,8 @@
                 <a href="{% url 'compras_ver' %}" class="nav-link">Compras</a>
             </li>
         </ul>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
         <a class="btn btn-primary my-3" href="{% url 'inventario_compras' %}">Agregar nuevo producto</a>
-        <a class="btn btn-primary my-3" href="{% url 'ver_deshabilitadosP' %}">Ver productos deshabilitados</a>
+        <a class="btn btn-primary my-3" href="{% url 'inventario_ver' %}">Ver productos </a>
         <div class="table-responsive">
             <table id="datatable-productos" class="table table-bordered table-striped">
                 <thead>
@@ -44,11 +35,13 @@
 </div>
 
 <script>
-    const deshabilitarUrlTemplate = "{% url 'deshabilitar_producto' 0 %}";
-    const actualizarUrlTemplate = "{% url 'inventario_editar' 0 %}";
+    const habilitarUrlTemplate = "{% url 'habilitar' 0 %}";
+    console.log("habilitarUrlTemplate:", habilitarUrlTemplate);
 </script>
-<script src="{% static 'js/productos.js' %}"></script>
 
+
+
+<script src="{% static 'js/deshabilitados.js' %}"></script>
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 

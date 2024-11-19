@@ -41,7 +41,9 @@ urlpatterns = [
     path('inventario/deshabilitar/<int:producto_id>/', views.deshabilitar_producto, name='deshabilitar_producto'),
     path('producto_agregar/',views.agregar_producto),
     path ('listaProductos/',views.lista_productos,name='lista_productos'),
-
+    path ('deshabilitados/',views.listaDeshabilitados,name='listaDeshabilitados'),
+    path('deshabilitados_ver',views.deshabilitados_ver,name='ver_deshabilitadosP'),
+    path('inventario/habilitar/<int:producto_id>/',views.habilitar_producto,name='habilitar'),
     path('proveedor_ver/',views.proveedores_ver),
     path('proveedor_ingresar/',views.proveedores_ingresar),
     path('proveedor/deshabilitar/<int:proveedor_id>/', views.deshabilitar_proveedor, name='deshabilitar_proveedor'),
