@@ -55,3 +55,18 @@
         .search-bar {
             margin-bottom: 20px;
         }
+.centered{
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.table-responsive {
+    max-height: calc(100vh - 120px); /* Ajusta según la altura del header */
+    overflow-y: auto;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}

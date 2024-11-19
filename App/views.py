@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http.response import JsonResponse
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
 
@@ -106,7 +106,20 @@ View Inventario
 
 def inventario_ver(request):
     productos = Producto.objects.filter(habilitado=True)
-    return render(request, 'inventario_ver.html', {'productos': productos})
+    return render(request, 'inventario_verP.html', {'productos': productos})
+
+def lista_productos(request):
+    productos = Producto.objects.filter(habilitado= True)  # Filtra solo los productos activos
+    productos_data = [
+        {
+            'id': producto.id,
+            'nombre': producto.nombre,
+            'cantidad': producto.cantidad,
+            'precio': producto.precio,
+        }
+        for producto in productos
+    ]
+    return JsonResponse({'productos': productos_data})
 
 def actualizar_inventario(request, id):
     producto = get_object_or_404(Producto, id=id)

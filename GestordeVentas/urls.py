@@ -35,11 +35,13 @@ urlpatterns = [
 
     path('compras_ver/', views.compras_Ver, name='compras_ver'),
     path('compras_ver/deshabilitar/<int:compra_id>',views.compra_deshabilitar, name='deshabilitar_compra'),
-    path('inventario_compras/<int:id>', views.compra_editar, name='inventario_compras'),
+    path('inventario_compras/<int:id>', views.compra_editar, name='inventario_editar'),
     path('inventario_compras/', views.compra_agregar, name='inventario_compras'),
     path('inventario_ver/', views.inventario_ver, name='inventario_ver'),
     path('inventario/deshabilitar/<int:producto_id>/', views.deshabilitar_producto, name='deshabilitar_producto'),
     path('producto_agregar/',views.agregar_producto),
+    path ('listaProductos/',views.lista_productos,name='lista_productos'),
+
     path('proveedor_ver/',views.proveedores_ver),
     path('proveedor_ingresar/',views.proveedores_ingresar),
     path('proveedor/deshabilitar/<int:proveedor_id>/', views.deshabilitar_proveedor, name='deshabilitar_proveedor'),

@@ -1,0 +1,37 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="col-md-10 ms-auto">
+    <div class="content-container p-3">
+        <div class="table-responsive">
+            <table id="datatable-productos" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th class="centered">#</th>
+                        <th class="centered">Producto</th>
+                        <th class="centered">Cantidad</th>
+                        <th class="centered">Precio</th>
+                        <th class="centered">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla_productos">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/productos.js' %}"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css">
