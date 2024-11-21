@@ -21,9 +21,9 @@
                             <td>{{ item.producto.nombre }}</td>
                             <td>
                                 <!-- Botones para aumentar y disminuir la cantidad -->
-                                <a href="{% url 'disminuir_del_carrito' item.producto.id %}" class="btn btn-sm btn-danger">-</a>
+                                <a href="{% url 'carrito_disminuir' item.producto.id %}" class="btn btn-sm btn-danger">-</a>
                                 {{ item.cantidad }}
-                                <a href="{% url 'agregar_al_carrito' item.producto.id %}" class="btn btn-sm btn-success">+</a>
+                                <a href="{% url 'carrito_agregar' item.producto.id %}" class="btn btn-sm btn-success">+</a>
                             </td>
                             <td>${{ item.precio_unitario }}</td>
                             <td>
@@ -35,7 +35,7 @@
                             </td>
                             <td> </td>
                             <td>
-                                <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                             </td>
                         </tr>
                     {% endfor %}

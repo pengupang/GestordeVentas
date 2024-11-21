@@ -43,7 +43,7 @@ const initDataTable = async () => {
  */
 const listaProducto = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:8000/deshabilitados/');
+        const response = await fetch('http://127.0.0.1:8000/inventario/deshabilitados/lista/');
         const data = await response.json();
         console.log(data); 
         let content = '';

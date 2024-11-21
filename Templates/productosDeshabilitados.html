@@ -1,7 +1,7 @@
 {% load static %}
 {% include 'header.html' %}
 <script>
-    const baseHabilitarUrl = "{% url 'habilitar' 0 %}";
+    const baseHabilitarUrl = "{% url 'producto_habilitar' 0 %}";
 </script>
 <div id="main-content" class="col-md-10 ms-auto">
     <div class="content-container p-3">
@@ -13,7 +13,7 @@
                 <a href="{% url 'compras_ver' %}" class="nav-link">Compras</a>
             </li>
         </ul>
-        <a class="btn btn-primary my-3" href="{% url 'inventario_compras' %}">Agregar nuevo producto</a>
+        <a class="btn btn-primary my-3" href="{% url 'compras_agregar' %}">Agregar nuevo producto</a>
         <a class="btn btn-primary my-3" href="{% url 'inventario_ver' %}">Ver productos </a>
         <div class="table-responsive">
             <table id="datatable-productos" class="table table-bordered table-striped">
@@ -35,7 +35,7 @@
 </div>
 
 <script>
-    const habilitarUrlTemplate = "{% url 'habilitar' 0 %}";
+    const habilitarUrlTemplate = "{% url 'producto_habilitar' 0 %}";
     console.log("habilitarUrlTemplate:", habilitarUrlTemplate);
 </script>
 

@@ -30,8 +30,11 @@
                               class='btn btn-success'><i class="bi bi-eye"></i>
                            </a>
                     
-                            <a href="#" class="btn btn-warning">
+                            <a href="{%url 'empleados_actualizar' empleado.id%}" class="btn btn-warning">
                                 <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{%url 'empleados_deshabilitar' empleado.id%}" class='btn btn-danger' onclick="return confirm('¿Estás seguro de deshabilitar este producto?');">
+                                <i class="bi bi-x-circle"></i>
                             </a>
                         </td>
                         <td>{{ empleado.nombre }}</td>

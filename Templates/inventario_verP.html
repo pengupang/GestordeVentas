@@ -1,7 +1,7 @@
 {% load static %}
 {% include 'header.html' %}
 <script>
-    const baseDeshabilitarUrl = "{% url 'deshabilitar_producto' 0 %}";
+    const baseDeshabilitarUrl = "{% url 'producto_deshabilitar' 0 %}";
 </script>
 
 <div id="main-content" class="col-md-10 ms-auto">
@@ -22,8 +22,8 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <a class="btn btn-primary my-3" href="{% url 'inventario_compras' %}">Agregar nuevo producto</a>
-        <a class="btn btn-primary my-3" href="{% url 'ver_deshabilitadosP' %}">Ver productos deshabilitados</a>
+        <a class="btn btn-primary my-3" href="{% url 'compras_agregar' %}">Agregar nuevo producto</a>
+        <a class="btn btn-primary my-3" href="{% url 'ver_deshabilitados' %}">Ver productos deshabilitados</a>
         <div class="table-responsive">
             <table id="datatable-productos" class="table table-bordered table-striped">
                 <thead>
@@ -44,8 +44,8 @@
 </div>
 
 <script>
-    const deshabilitarUrlTemplate = "{% url 'deshabilitar_producto' 0 %}";
-    const actualizarUrlTemplate = "{% url 'inventario_editar' 0 %}";
+    const deshabilitarUrlTemplate = "{% url 'producto_deshabilitar' 0 %}";
+    const actualizarUrlTemplate = "{% url 'inventario_actualizar' 0 %}";
 </script>
 <script src="{% static 'js/productos.js' %}"></script>
 

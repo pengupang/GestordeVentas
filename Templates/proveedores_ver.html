@@ -36,13 +36,13 @@
                            </a>
                         </td>
                         <td>
-                            <a href="{% url 'actualizar_proveedor' pro.id %}" class="btn btn-warning">
+                            <a href="{% url 'proveedores_actualizar' pro.id %}" class="btn btn-warning">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>
                         <td>
                             {% if pro.id %}
-                                <a href="{% url 'deshabilitar_proveedor' pro.id %}" class="btn btn-danger">
+                                <a href="{% url 'proveedores_deshabilitar' pro.id %}" class="btn btn-danger">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             {% else %}
