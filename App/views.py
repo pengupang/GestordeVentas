@@ -34,6 +34,17 @@ def agregar_empleado(request):
     data = {'form': form }
     return render(request,'empleados_agregar.html',data)
 
+def actualizar_empleado(request, empleado_id):
+    empleado=get_object_or_404(Empleado, id=empleado_id)
+    form=EmpleadoForm(instance=empleado)
+    if request.method == 'POST':
+        form=EmpleadoForm(request.POST,instance=empleado)
+        if form.is_valid():
+            form.save()
+        return redirect('../empleados_ver/')
+    data={'form':form,'titulo':'Empleado actualizado'}
+    return render(request,'empleado_agregado.html',data)
+
 def deshabilitar_empleado(request, empleado_id):
     empleados = get_object_or_404(Empleado, id=empleado_id)
     empleados.habilitado = False  
