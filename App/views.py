@@ -242,7 +242,7 @@ def deshabilitar_proveedor(request, proveedor_id):
     proveedor.habilitado = False  
     proveedor.save()
     messages.success(request, f'Proveedor {proveedor.Nombre} deshabilitado.')
-    return redirect('lista_proveedores')
+    return redirect('proveedores_ver')
 
 def actualizar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)

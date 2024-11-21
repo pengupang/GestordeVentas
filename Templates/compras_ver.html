@@ -6,7 +6,7 @@
         <h2>Productos</h2>
         <ul class="nav nav-tabs">
             <li class="nav-item"><a href="{% url 'inventario_ver' %}" class="nav-link active"> Ver</a></li>
-            <li class="nav-item "><a href="{% url 'inventario_compras' %}" class="nav-link"> Agregar</a></li>  
+            <li class="nav-item "><a href="{% url 'compras_agregar' %}" class="nav-link"> Agregar</a></li>  
         </ul>
         <div class="table-container">
             <ul class="nav nav-tabs">
@@ -30,7 +30,7 @@
                     <tr>
                         <td>
                             <a href="#" class="nav-item"><i class="bi bi-pencil"></i></a> 
-                            <a href="{% url 'deshabilitar_compra' compras.id %}" class="nav-item" title="Deshabilitar">
+                            <a href="{% url 'compras_deshabilitar' compras.id %}" class="nav-item" title="Deshabilitar">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </a>
                         </td>
