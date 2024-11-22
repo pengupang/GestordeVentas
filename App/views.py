@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum, F, Value
+from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
@@ -215,6 +217,15 @@ def reducir_cantidad_producto(request, producto_id, cantidad):
     messages.success(request, f"Se redujeron {cantidad} unidades del producto '{producto.nombre}'.")
     return JsonResponse({'message': 'Cantidad reducida exitosamente', 'nueva_cantidad': producto.cantidad})
 
+def productos_mayor_variacion(request):
+    productos_variacion = (
+        HistorialInventario.objects.values('producto__id', 'producto__nombre')
+        .annotate(
+            total_variacion=Coalesce(Sum('cantidad'), Value(0))
+        )
+        .order_by('-total_variacion')[:10] 
+    )
+    return render(request, '#', {'productos_variacion': productos_variacion})
 
 """
 View Proveedores 

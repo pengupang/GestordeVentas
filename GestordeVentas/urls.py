@@ -51,6 +51,7 @@ urlpatterns = [
     path('inventario/lista/', views.lista_productos, name='lista_productos'),
     path('inventario/deshabilitados/lista/', views.listaDeshabilitados, name='lista_deshabilitados'),
     path('inventario/historial/', views.historial_inventario, name='historial_inventario'),
+    path('inventario/variacion/', views.productos_mayor_variacion, name='productos_mayor_variacion'),
 
     # Proveedores
     path('proveedores/', views.proveedores_ver, name='proveedores_ver'),
