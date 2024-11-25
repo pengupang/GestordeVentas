@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
-from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario
-from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm
+from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
+from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
 
 
 
@@ -226,6 +226,17 @@ def productos_mayor_variacion(request):
         .order_by('-total_variacion')[:10] 
     )
     return render(request, '#', {'productos_variacion': productos_variacion})
+
+def seleccionar_producto(request):
+    if request.method == 'POST':
+        form = SeleccionProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_seleccion')  # Cambia por la ruta de tu lista de selección
+    else:
+        form = SeleccionProductoForm()
+
+    return render(request, 'seleccionar_producto.html', {'form': form})
 
 """
 View Proveedores 

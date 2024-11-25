@@ -86,3 +86,14 @@ class HistorialInventario(models.Model):
 
     def __str__(self):
         return f"{self.tipo} - {self.producto.nombre} - {self.cantidad}"           
+    
+class SeleccionProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    seleccionado_en = models.DateTimeField(auto_now_add=True)
+
+    def subtotal(self):
+        return self.producto.precio_con_descuento() * self.cantidad
+
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.cantidad}"

@@ -1,5 +1,5 @@
 from django import forms
-from App.models import Proveedor, Empleado, Compra, Producto
+from App.models import Proveedor, Empleado, Compra, Producto, SeleccionProducto
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
@@ -78,3 +78,12 @@ class CompraForm(forms.ModelForm):
         super(CompraForm, self).__init__(*args, **kwargs)
         self.fields['producto'].queryset = Producto.objects.filter(habilitado=True)
         self.fields['proveedor'].queryset = Proveedor.objects.filter(habilitado=True)
+
+class SeleccionProductoForm(forms.ModelForm):
+    class Meta:
+        model = SeleccionProducto
+        fields = ['producto', 'cantidad']
+        widgets = {
+            'producto': forms.Select(attrs={'class': 'form-select'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+        }
