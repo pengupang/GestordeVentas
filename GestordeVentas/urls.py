@@ -68,6 +68,9 @@ urlpatterns = [
     # Reportes
     path('reportes/', views.generar_reporte, name='generar_reporte'),
 
+    #Ventas
+    path('venta/',views.generar_venta,name='venta')
+
     
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

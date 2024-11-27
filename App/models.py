@@ -52,10 +52,10 @@ class Compra(models.Model):
 
     
 class Venta(models.Model):
-        fecha = models.DateField()
+        fecha = models.DateField(auto_now_add=True)
         detalles = models.TextField()  # Información sobre los productos vendidos
         tipo = models.CharField(max_length=50, default='venta')
-        producto = models.CharField(max_length=100)  # Ejemplo: nombre del producto
+        producto = models.ForeignKey(Producto, on_delete=models.CASCADE)  # Ejemplo: nombre del producto
         cantidad = models.IntegerField()  # Ejemplo: cantidad vendida
         precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)  # Precio por unidad
 

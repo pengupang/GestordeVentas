@@ -37,7 +37,7 @@
                                     No aplica
                                 {% endif %}
                             </td>
-                            <td> </td>
+                            <td> {{item.precio_final}}</td>
                             <td>
                                 <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm"><i class="bi bi-x-square"></i></a>
                             </td>
@@ -46,6 +46,9 @@
                 </tbody>
             </table>
             <h3 class="text-right">Total: ${{ total }}</h3>
+        </div>
+        <div class="text-right">
+            <a href="{% url 'venta' %}" class="btn btn-success">Finalizar compra</a>
         </div>
 </div></div>
 </div>

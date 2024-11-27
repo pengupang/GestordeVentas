@@ -1,0 +1,14 @@
+{%include 'header.html'%}
+<div id="main-content" class="col-md-10">
+<div class="container mt-5">
+    <h1 class="text-center">Venta Completada</h1>
+    <h3>Fecha de la venta: {{ fecha }}</h3>
+    <h4>Detalles de la venta:</h4>
+    <ul>
+        {% for detalle in detalles %}
+            <li>{{ detalle }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Total de la venta: ${{ total_venta }}</h3>
+</div>
+</div>

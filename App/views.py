@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
+from django.utils import timezone
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
 
@@ -86,6 +87,7 @@ def disminuir_del_carrito(request, producto_id):
 def ver_carrito(request):
     carrito = request.session.get('carrito', {})  # Suponiendo que el carrito se guarda en la sesión
     productos_carrito = []
+    total = 0
 
     # Recolecta productos en el carrito
     for producto_id, cantidad in carrito.items():
@@ -98,9 +100,11 @@ def ver_carrito(request):
             'precio_final': precio_final,
             'descuento': producto.descuento,
         })
+    for item in productos_carrito:
+        item['precio_final'] = item['precio_unitario'] * item['cantidad'] * (1 - item['descuento'] / 100)
+        total += item['precio_final']
 
-    # Calcular el total del carrito
-    total = sum(item['precio_final'] * item['cantidad'] for item in productos_carrito)
+    
 
     return render(request, 'carrito.html', {'productos_carrito': productos_carrito, 'total': total})
 
@@ -112,7 +116,43 @@ def eliminar_del_carrito(request, producto_id):
     
     request.session['carrito'] = carrito
     return redirect('carrito')
+"""
+View ventas 
+"""
+def generar_venta(request):
+    carrito = request.session.get('carrito', {})
+    total_venta = 0  # Total de la venta
+    
+    # Recorremos el carrito para procesar cada producto
+    for producto_id, cantidad in carrito.items():
+        producto = Producto.objects.get(id=producto_id)
+        precio_unitario_con_descuento = producto.precio_con_descuento()  # Precio con descuento
 
+        # Verificamos si hay suficiente stock
+        if producto.cantidad >= cantidad:
+            # Crear la venta para cada producto
+            venta = Venta.objects.create(
+                producto=producto,
+                cantidad=cantidad,
+                precio_unitario=precio_unitario_con_descuento,
+                detalles=f"Venta de {cantidad} unidades de {producto.nombre}"
+            )
+
+            # Actualizar el stock del producto
+            producto.cantidad -= cantidad
+            producto.save()
+
+            # Calculamos el total de la venta
+            total_venta += venta.total()  # Llama al método total() que calcula cantidad * precio_unitario
+        else:
+            # Si no hay suficiente stock, puedes mostrar un mensaje o redirigir
+            return render(request, 'carrito.html', {'mensaje': 'No hay suficiente stock para algunos productos.'})
+
+    # Limpiar el carrito después de la venta
+    request.session['carrito'] = {}
+
+    # Aquí puedes redirigir al usuario a una página de confirmación o a la página de ventas
+    return render(request, 'venta.html', {'total_venta': total_venta})
 """
 View Inventario 
 """
