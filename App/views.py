@@ -3,7 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
-from django.utils import timezone
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from datetime import datetime
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
 
@@ -122,7 +125,8 @@ View ventas
 def generar_venta(request):
     carrito = request.session.get('carrito', {})
     total_venta = 0  # Total de la venta
-    
+    detalles_venta = []
+
     # Recorremos el carrito para procesar cada producto
     for producto_id, cantidad in carrito.items():
         producto = Producto.objects.get(id=producto_id)
@@ -144,6 +148,14 @@ def generar_venta(request):
 
             # Calculamos el total de la venta
             total_venta += venta.total()  # Llama al método total() que calcula cantidad * precio_unitario
+            detalles_venta.append({
+                'producto': producto.nombre,
+                'cantidad': cantidad,
+                'precio_unitario': precio_unitario_con_descuento,
+                'total': venta.total(),
+                'descuento': producto.descuento,  # Incluimos el descuento
+                'precio_final': precio_unitario_con_descuento * (1 - producto.descuento / 100),  # Precio final con descuento
+            })
         else:
             # Si no hay suficiente stock, puedes mostrar un mensaje o redirigir
             return render(request, 'carrito.html', {'mensaje': 'No hay suficiente stock para algunos productos.'})
@@ -151,8 +163,55 @@ def generar_venta(request):
     # Limpiar el carrito después de la venta
     request.session['carrito'] = {}
 
-    # Aquí puedes redirigir al usuario a una página de confirmación o a la página de ventas
-    return render(request, 'venta.html', {'total_venta': total_venta})
+    # Crear un PDF con los detalles de la venta
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="boleto_venta.pdf"'
+
+    # Crear el objeto canvas de ReportLab para el PDF
+    p = canvas.Canvas(response, pagesize=letter)
+    p.setFont("Helvetica", 12)
+
+    # Agregar detalles de la venta al PDF
+    p.drawString(100, 750, "Boleto de Venta")
+    p.drawString(100, 730, f"Fecha: {venta.fecha}")
+    
+    
+
+    # Dibujar encabezados de la tabla
+    p.rect(50, 670, 500, 20)  # Caja para la cabecera de la tabla
+    p.drawString(100, 675, "Producto")
+    p.drawString(250, 675, "Cantidad")
+    p.drawString(350, 675, "Precio Unitario")
+    p.drawString(450, 675, "Total")
+
+    # Listar los productos comprados
+    y_position = 650  # Posición inicial para los productos
+    for detalle in detalles_venta:
+        p.drawString(100, y_position, f"{detalle['producto']}")
+        p.drawString(250, y_position, f"{detalle['cantidad']}")
+        p.drawString(350, y_position, f"${detalle['precio_unitario']:.2f}")
+        p.drawString(450, y_position, f"${detalle['total']:.2f}")
+
+        # Mostrar descuento si hay
+        if detalle['descuento'] > 0:
+            p.drawString(100, y_position - 20, f"Descuento: {detalle['descuento']}%")
+            p.drawString(250, y_position - 20, f"Precio Final con Descuento: ${detalle['precio_final']:.2f}")
+        
+        # Dibujar una línea después de cada producto
+        p.line(50, y_position - 10, 550, y_position - 10)
+
+        y_position -= 40  # Espacio para el siguiente producto
+
+    # Agregar el total de la venta al final
+    p.drawString(100, y_position - 20, f"Total de la Venta: ${total_venta:.2f}")
+
+    # Cerrar el PDF
+    p.showPage()
+    p.save()
+
+    # Redirigir al catálogo después de generar el PDF
+    return response
+
 """
 View Inventario 
 """
