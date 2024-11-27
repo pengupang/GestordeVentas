@@ -7,17 +7,21 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>Imagen</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Precio Unitario</th>
                         <th>Descuento</th>
                         <th>Precio Final</th>
-                        <th>Acciones</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in productos_carrito %}
                         <tr>
+                            <td>
+                                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" class="img-thumbnail" >
+                            </td>
                             <td>{{ item.producto.nombre }}</td>
                             <td>
                                 <!-- Botones para aumentar y disminuir la cantidad -->
@@ -35,7 +39,7 @@
                             </td>
                             <td> </td>
                             <td>
-                                <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm"><i class="bi bi-x-square"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -199,7 +199,7 @@ def habilitar_producto(request, producto_id):
     producto.habilitado = True
     producto.save()
     messages.success(request, f'Producto {producto.nombre} habilitado.')
-    return redirect('ver_deshabilitadosP') 
+    return redirect('ver_deshabilitados') 
 
 def reducir_cantidad_producto(request, producto_id, cantidad):
     """

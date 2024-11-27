@@ -1,0 +1,44 @@
+ingresar proveedores
+esto se pega en la consola de django:
+python manage.py Shell
+genera los datos en la bd
+
+from App.models import Proveedor
+
+proveedores = [
+    Proveedor(Nombre="GameMasters", Representante="Juan Pérez", Contacto="1234567890"),
+    Proveedor(Nombre="PixelPlay", Representante="Ana López", Contacto="0987654321"),
+    Proveedor(Nombre="8Bit Supplies", Representante="Carlos Gómez", Contacto="1122334455"),
+    Proveedor(Nombre="Control Freaks", Representante="Laura García", Contacto="2233445566"),
+    Proveedor(Nombre="RetroTech", Representante="Miguel Fernández", Contacto="3344556677"),
+    Proveedor(Nombre="Gamer's Haven", Representante="Claudia Sánchez", Contacto="4455667788"),
+    Proveedor(Nombre="Arcadia Ventures", Representante="Eduardo Rodríguez", Contacto="5566778899"),
+    Proveedor(Nombre="NextGen Games", Representante="Sofia Martínez", Contacto="6677889900"),
+    Proveedor(Nombre="Digital Play", Representante="David López", Contacto="7788990011"),
+    Proveedor(Nombre="Gizmo Gaming", Representante="Luis Pérez", Contacto="8899001122"),
+    Proveedor(Nombre="Pixel Zone", Representante="Ana González", Contacto="9900112233"),
+    Proveedor(Nombre="GameWorld", Representante="Jorge Díaz", Contacto="1011122333"),
+    Proveedor(Nombre="PowerUp Supplies", Representante="Eva García", Contacto="1122334455"),
+    Proveedor(Nombre="GameFlex", Representante="Rosa Ramírez", Contacto="2233445566"),
+    Proveedor(Nombre="Elite Gamers", Representante="Alberto Gómez", Contacto="3344556677"),
+    Proveedor(Nombre="TechQuest", Representante="Beatriz Herrera", Contacto="4455667788"),
+    Proveedor(Nombre="FuturePlay", Representante="Antonio Martín", Contacto="5566778899"),
+    Proveedor(Nombre="Infinity Games", Representante="Pablo García", Contacto="6677889900"),
+    Proveedor(Nombre="Gamer's Choice", Representante="Carlos Rodríguez", Contacto="7788990011"),
+    Proveedor(Nombre="Pixelated Dreams", Representante="Isabel López", Contacto="8899001122"),
+    Proveedor(Nombre="NeoTech", Representante="María Sánchez", Contacto="9900112233"),
+    Proveedor(Nombre="GamerX", Representante="Juan Martín", Contacto="1011122333"),
+    Proveedor(Nombre="LevelUp", Representante="José Pérez", Contacto="1122334455"),
+    Proveedor(Nombre="GameTime", Representante="Marta López", Contacto="2233445566"),
+    Proveedor(Nombre="Arcade Plus", Representante="Alfonso García", Contacto="3344556677"),
+    Proveedor(Nombre="PixelCraft", Representante="Teresa González", Contacto="4455667788"),
+    Proveedor(Nombre="NextPlay", Representante="Victor Hernández", Contacto="5566778899"),
+    Proveedor(Nombre="GameZone", Representante="Carmen Díaz", Contacto="6677889900"),
+    Proveedor(Nombre="Arcadia Games", Representante="Rafael Ramírez", Contacto="7788990011"),
+    Proveedor(Nombre="TechnoPlay", Representante="Luisa Martínez", Contacto="8899001122")
+]
+
+# Crear todos los proveedores
+Proveedor.objects.bulk_create(proveedores)
+
+print("30 proveedores han sido creados exitosamente.")

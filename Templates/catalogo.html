@@ -28,7 +28,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ producto.nombre }}</h5>
                                     <p class="card-text">Precio: ${{ producto.precio }}</p>
-                                    <p class="card-text">{{ producto.descripcion }}</p>
+                                    <p class="card-text">Cantidad disponible: {{ producto.cantidad }}</p>
                                     <a href="{% url 'carrito_agregar' producto.id %}" class="btn btn-success">Agregar al carrito</a>
                                 </div>
                             </div>

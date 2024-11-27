@@ -1,0 +1,36 @@
+ingresar productos
+esto se pega en la consola de django:
+python manage.py Shell
+genera los datos en la bd
+
+
+
+from App.models import Producto
+
+productos = [
+    Producto(nombre="The Legend of Zelda: Breath of the Wild", cantidad=50, precio=1400, habilitado=True, descuento=10.0, imagen="imgProducts/zelda_botw.jpg"),
+    Producto(nombre="Super Mario Odyssey", cantidad=30, precio=1200, habilitado=True, descuento=5.0, imagen="imgProducts/mario_odyssey.jpg"),
+    Producto(nombre="God of War Ragnarök", cantidad=20, precio=1500, habilitado=True, descuento=15.0, imagen="imgProducts/gow_ragnarok.jpg"),
+    Producto(nombre="Halo Infinite", cantidad=40, precio=1300, habilitado=True, descuento=0.0, imagen="imgProducts/halo_infinite.jpg"),
+    Producto(nombre="Minecraft", cantidad=100, precio=500, habilitado=True, descuento=20.0, imagen="imgProducts/minecraft.jpg"),
+    Producto(nombre="Spider-Man: Miles Morales", cantidad=35, precio=1100, habilitado=True, descuento=5.0, imagen="imgProducts/spiderman_miles.jpg"),
+    Producto(nombre="Final Fantasy VII Remake", cantidad=60, precio=1600, habilitado=True, descuento=0.0, imagen="imgProducts/ff7_remake.jpg"),
+    Producto(nombre="Red Dead Redemption 2", cantidad=80, precio=1800, habilitado=True, descuento=25.0, imagen="imgProducts/rdr2.jpg"),
+    Producto(nombre="Call of Duty: Modern Warfare II", cantidad=50, precio=1700, habilitado=True, descuento=10.0, imagen="imgProducts/cod_mw2.jpg"),
+    Producto(nombre="FIFA 23", cantidad=45, precio=1200, habilitado=True, descuento=5.0, imagen="imgProducts/fifa_23.jpg"),
+    Producto(nombre="Gran Turismo 7", cantidad=25, precio=1500, habilitado=True, descuento=15.0, imagen="imgProducts/gt7.jpg"),
+    Producto(nombre="The Last of Us Part II", cantidad=20, precio=2000, habilitado=True, descuento=30.0, imagen="imgProducts/tlou2.jpg"),
+    Producto(nombre="Animal Crossing: New Horizons", cantidad=70, precio=800, habilitado=True, descuento=0.0, imagen="imgProducts/animal_crossing.jpg"),
+    Producto(nombre="Mario Kart 8 Deluxe", cantidad=50, precio=1000, habilitado=True, descuento=10.0, imagen="imgProducts/mk8_deluxe.jpg"),
+    Producto(nombre="Persona 5 Royal", cantidad=40, precio=1300, habilitado=True, descuento=20.0, imagen="imgProducts/persona_5_royal.jpg"),
+    Producto(nombre="The Witcher 3: Wild Hunt", cantidad=60, precio=1400, habilitado=True, descuento=15.0, imagen="imgProducts/witcher3.jpg"),
+    Producto(nombre="Sekiro: Shadows Die Twice", cantidad=30, precio=1600, habilitado=True, descuento=0.0, imagen="imgProducts/sekiro.jpg"),
+    Producto(nombre="Assassin's Creed Valhalla", cantidad=50, precio=1700, habilitado=True, descuento=5.0, imagen="imgProducts/assassins_creed_valhalla.jpg"),
+    Producto(nombre="Death Stranding", cantidad=45, precio=1800, habilitado=True, descuento=25.0, imagen="imgProducts/death_stranding.jpg"),
+    Producto(nombre="Nier: Automata", cantidad=55, precio=1200, habilitado=True, descuento=10.0, imagen="imgProducts/nier_automata.jpg")
+]
+
+# Crear todos los productos
+Producto.objects.bulk_create(productos)
+
+print("20 productos han sido creados exitosamente.")

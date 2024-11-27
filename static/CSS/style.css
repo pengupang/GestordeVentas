@@ -72,7 +72,7 @@ body {
 /* Elementos del catálogo */
 .catalogo-item {
     width: 100%; /* Ocupa todo el ancho del contenedor */
-    height: 150px; /* Altura fija */
+    height: 200px; /* Altura fija */
     background-color: #f7f7f7; /* Fondo gris claro */
     border-radius: 5px; /* Bordes redondeados */
     display: flex; /* Flexbox para alineación */
@@ -86,6 +86,12 @@ body {
     max-width: 100%; /* Limitar el ancho máximo */
     max-height: 100%; /* Limitar la altura máxima */
     object-fit: cover; /* Ajustar la imagen dentro del contenedor */
+}
+.card-img-top {
+    width: 100%;
+    height: 200px; /* Ajusta este valor según el tamaño que desees */
+    object-fit: contain; /* Asegura que la imagen se ajuste sin recorte */
+    background-color: #f7f7f7; /* Agrega un color de fondo en caso de que quede espacio vacío */
 }
 
 /* Barra de búsqueda */
@@ -114,4 +120,9 @@ body {
 /* Estilo adicional para tabs */
 .nav-tabs {
     margin-top: 10px; /* Espaciado superior para mejorar estética */
+}
+.img-thumbnail {
+    width: 100px;  /* Ajusta según el tamaño que desees */
+    height: 100px; /* Mantén un tamaño cuadrado */
+    object-fit: cover; /* Recorta la imagen si es necesario para ajustarse al espacio */
 }
