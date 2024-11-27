@@ -22,6 +22,9 @@
                 </div>
             {% endfor %}
         {% endif %}
+        <div id="alerta-stock-bajo" class="alert alert-danger d-none" role="alert">
+            Hay productos con pocas unidades.
+          </div>
         <a class="btn btn-primary my-3" href="{% url 'compras_agregar' %}">Agregar nuevo producto</a>
         <a class="btn btn-primary my-3" href="{% url 'ver_deshabilitados' %}">Ver productos deshabilitados</a>
         <div class="table-responsive">
@@ -47,7 +50,9 @@
     const deshabilitarUrlTemplate = "{% url 'producto_deshabilitar' 0 %}";
     const actualizarUrlTemplate = "{% url 'inventario_actualizar' 0 %}";
 </script>
-<script src="{% static 'js/productos.js' %}"></script>
+
+
+
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -58,7 +63,7 @@
 
 <!-- Bootstrap 5 JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
+<script src="{% static 'js/productos.js' %}"></script>
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css">
