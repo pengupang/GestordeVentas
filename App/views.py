@@ -142,9 +142,14 @@ def generar_venta(request):
                 detalles=f"Venta de {cantidad} unidades de {producto.nombre}"
             )
 
-            # Actualizar el stock del producto
+            # Actualizamos el stock del producto
             producto.cantidad -= cantidad
             producto.save()
+
+            # Verificamos si la cantidad llegó a 0 y deshabilitamos el producto
+            if producto.cantidad == 0:
+                producto.habilitado = False
+                producto.save()
 
             # Calculamos el total de la venta
             total_venta += venta.total()  # Llama al método total() que calcula cantidad * precio_unitario
@@ -174,8 +179,6 @@ def generar_venta(request):
     # Agregar detalles de la venta al PDF
     p.drawString(100, 750, "Boleto de Venta")
     p.drawString(100, 730, f"Fecha: {venta.fecha}")
-    
-    
 
     # Dibujar encabezados de la tabla
     p.rect(50, 670, 500, 20)  # Caja para la cabecera de la tabla
@@ -212,6 +215,7 @@ def generar_venta(request):
     # Redirigir al catálogo después de generar el PDF
     return response
 
+
 """
 View Inventario 
 """
@@ -238,7 +242,7 @@ def inventario_ver(request):
     return render(request, 'inventario_verP.html')
 
 def lista_productos(request):
-    productos = Producto.objects.filter(habilitado= True)  # Filtra solo los productos activos
+    productos = Producto.objects.filter(habilitado=True)  # Filtra solo los productos habilitados
     productos_data = [
         {
             'id': producto.id,
@@ -249,6 +253,7 @@ def lista_productos(request):
         for producto in productos
     ]
     return JsonResponse({'productos': productos_data})
+
 
 def actualizar_inventario(request, id):
     producto = get_object_or_404(Producto, id=id)
@@ -261,12 +266,19 @@ def actualizar_inventario(request, id):
             producto.actualizado_por = request.user.username  # Registrar el usuario que hizo el cambio
             producto.razon_actualizacion = form.cleaned_data['razon_actualizacion']  # Registrar la razón
             producto.save()
+
+            #Custion para verificar si llego a 0
+            if producto.cantidad == 0:
+                producto.habilitado = False
+                producto.save()
+
             messages.success(request, 'Inventario actualizado correctamente.')
             return redirect('inventario_ver')
         else:
             messages.error(request, 'Error al actualizar el inventario.')
 
     return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
+
 
 def historial_inventario(request):
     # Obtener todo el historial (entradas y salidas)
