@@ -33,6 +33,7 @@ urlpatterns = [
     path('empleados/agregar/', views.agregar_empleado, name='empleados_agregar'),
     path('empleados/actualizar/<int:empleado_id>/', views.actualizar_empleado, name='empleados_actualizar'),
     path('empleados/deshabilitar/<int:empleado_id>/', views.deshabilitar_empleado, name='empleados_deshabilitar'),
+    path('empleados_agregar/', views.agregar_empleado, name='empleados_agregar'),
 
     # Catálogo y carrito
     path('catalogo/', views.catalogo_view, name='catalogo'),
@@ -58,12 +59,16 @@ urlpatterns = [
     path('proveedores/agregar/', views.proveedores_ingresar, name='proveedores_agregar'),
     path('proveedores/actualizar/<int:proveedor_id>/', views.actualizar_proveedor, name='proveedores_actualizar'),
     path('proveedores/deshabilitar/<int:proveedor_id>/', views.deshabilitar_proveedor, name='proveedores_deshabilitar'),
+    path('proveedor_ingresar/', views.proveedores_ingresar, name='proveedores_ingresar'), 
+    path('proveedor_ver/', views.proveedores_ver, name='proveedores_ver'),
 
     # Compras
     path('compras/', views.compras_Ver, name='compras_ver'),
     path('compras/agregar/', views.compra_agregar, name='compras_agregar'),
     path('compras/actualizar/<int:id>/', views.compra_editar, name='compras_actualizar'),
     path('compras/deshabilitar/<int:compra_id>/', views.compra_deshabilitar, name='compras_deshabilitar'),
+    path('compras/inventario_ver/', views.inventario_ver, name='compras_inventario_ver'),
+    path('compras/editar/<int:id>/', views.editar_compra, name='compras_editar'),
 
     # Reportes
     path('reportes/', views.generar_reporte, name='generar_reporte'),

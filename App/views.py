@@ -349,6 +349,22 @@ def seleccionar_producto(request):
 
     return render(request, 'seleccionar_producto.html', {'form': form})
 
+def editar_compra(request, id):
+    compra = get_object_or_404(Compra, id=id)
+    if request.method == 'POST':
+        form = CompraForm(request.POST, instance=compra)
+        if form.is_valid():
+            form.save()
+            return redirect('compras_ver') 
+    else:
+        form = CompraForm(instance=compra)
+    
+    return render(request, 'inventario_compras.html', {
+        'form': form,
+        'compra': compra,
+        'titulo': 'Editar Compra' 
+    })
+
 """
 View Proveedores 
 """

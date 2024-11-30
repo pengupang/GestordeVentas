@@ -29,7 +29,9 @@
                     {% for compras in compra %}
                     <tr>
                         <td>
-                            <a href="#" class="nav-item"><i class="bi bi-pencil"></i></a> 
+                            <a href="{% url 'compras_editar' compras.id %}" class="nav-item" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a> 
                             <a href="{% url 'compras_deshabilitar' compras.id %}" class="nav-item" title="Deshabilitar">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </a>
