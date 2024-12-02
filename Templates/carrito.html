@@ -24,10 +24,13 @@
                             </td>
                             <td>{{ item.producto.nombre }}</td>
                             <td>
-                                <!-- Botones para aumentar y disminuir la cantidad -->
-                                <a href="{% url 'carrito_disminuir' item.producto.id %}" class="btn btn-sm btn-danger">-</a>
-                                {{ item.cantidad }}
-                                <a href="{% url 'carrito_agregar' item.producto.id %}" class="btn btn-sm btn-success">+</a>
+                                <h3>{{ item.producto.nombre }}</h3>
+                                <p>Cantidad: {{ item.cantidad }}</p>
+                                <p>Subtotal: {{ item.subtotal }}</p>
+
+                                <button onclick="actualizarCantidad({ id }, 'aumentar')">Aumentar</button>
+                                <button onclick="actualizarCantidad({ id }, 'disminuir')">Disminuir</button>
+                                                                
                             </td>
                             <td>${{ item.precio_unitario }}</td>
                             <td>
@@ -42,7 +45,27 @@
                                 <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm"><i class="bi bi-x-square"></i></a>
                             </td>
                         </tr>
+
+                        
                     {% endfor %}
+
+                    <script>
+                        function actualizarCantidad(id_producto, accion) {
+                            fetch(`/actualizar_carrito/${id_producto}/${accion}/`, {
+                                method: 'GET',
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Recarga la página para actualizar la interfaz
+                                    location.reload();  
+                                } else {
+                                    alert('Error al actualizar la cantidad');
+                                }
+                            })
+                            .catch(error => console.log('Error:', error));
+                        }
+                        </script>
                 </tbody>
             </table>
             <h3 class="text-right">Total: ${{ total }}</h3>

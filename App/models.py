@@ -95,5 +95,14 @@ class SeleccionProducto(models.Model):
     def subtotal(self):
         return self.producto.precio_con_descuento() * self.cantidad
 
+    def aumentar_cantidad(self):
+        self.cantidad += 1
+        self.save()
+
+    def disminuir_cantidad(self):
+        if self.cantidad > 1:
+            self.cantidad -= 1
+            self.save()
+
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad}"

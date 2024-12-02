@@ -87,6 +87,25 @@ def disminuir_del_carrito(request, producto_id):
     request.session['carrito'] = carrito
     return redirect('carrito')
 
+def actualizar_carrito(request, id_producto, accion):
+    try:
+        # Buscar el producto en el carrito
+        carrito_item = SeleccionProducto.objects.get(id=id_producto, usuario=request.user)
+        
+        # Actualizar la cantidad según la acción (aumentar o disminuir)
+        if accion == 'aumentar':
+            carrito_item.cantidad += 1
+        elif accion == 'disminuir' and carrito_item.cantidad > 1:
+            carrito_item.cantidad -= 1
+        else:
+            return JsonResponse({'success': False}, status=400)
+        
+        carrito_item.save()  # Guardar el cambio
+
+        return JsonResponse({'success': True})
+    except SeleccionProducto.DoesNotExist:
+        return JsonResponse({'success': False}, status=404)
+
 def ver_carrito(request):
     carrito = request.session.get('carrito', {})  # Suponiendo que el carrito se guarda en la sesión
     productos_carrito = []
