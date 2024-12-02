@@ -8,7 +8,7 @@ body {
 .bg-primary {
     height: 60px; /* Altura fija del header */
     z-index: 1030; /* Mantener el header siempre sobre otros elementos */
-    padding-left: 15px;/* Añade espacio a la izquierda */
+    padding-left: 15px; /* Añade espacio a la izquierda */
 }
 
 /* Sidebar fijo */
@@ -30,99 +30,77 @@ body {
     padding-top: 80px; /* Espaciado superior para evitar superposición con el header */
 }
 
-/* Contenedor de login */
-.login-container {
-    background-color: white; /* Fondo blanco */
-    padding: 40px; /* Espaciado interno */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra para dar efecto de elevación */
-    border-radius: 10px; /* Bordes redondeados */
-    text-align: center; /* Centrar contenido dentro */
-    margin-top: 150px; /* Separación superior para centrar en la página */
-}
-
-/* Links dentro del sidebar */
-.sidebar .nav-link {
-    color: #333; /* Color de texto gris oscuro */
-}
-
-.sidebar .nav-link.active {
-    background-color: #d3e0ea; /* Fondo azul claro para el link activo */
-}
-
-/* Contenedor del perfil */
-.profile-container {
-    padding: 2rem; /* Espaciado interno amplio */
-}
-
-/* Cabecera del perfil */
-.profile-header {
-    display: flex; /* Flexbox para alineación */
-    justify-content: space-between; /* Separar elementos a los extremos */
-    align-items: center; /* Centrar verticalmente */
-}
-
-/* Imagen del perfil */
-.profile-img {
-    width: 100px; /* Ancho fijo */
-    height: 100px; /* Altura fija */
-    border-radius: 50%; /* Hacer la imagen circular */
-    background-color: #ddd; /* Fondo gris claro si no hay imagen */
-}
-
-/* Elementos del catálogo */
-.catalogo-item {
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    height: 200px; /* Altura fija */
-    background-color: #f7f7f7; /* Fondo gris claro */
-    border-radius: 5px; /* Bordes redondeados */
-    display: flex; /* Flexbox para alineación */
-    align-items: center; /* Centrar verticalmente */
-    justify-content: center; /* Centrar horizontalmente */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-}
-
-/* Imágenes dentro del catálogo */
-.catalogo-item img {
-    max-width: 100%; /* Limitar el ancho máximo */
-    max-height: 100%; /* Limitar la altura máxima */
-    object-fit: cover; /* Ajustar la imagen dentro del contenedor */
-}
-.card-img-top {
-    width: 100%;
-    height: 200px; /* Ajusta este valor según el tamaño que desees */
-    object-fit: contain; /* Asegura que la imagen se ajuste sin recorte */
-    background-color: #f7f7f7; /* Agrega un color de fondo en caso de que quede espacio vacío */
-}
-
-/* Barra de búsqueda */
-.search-bar {
-    margin-bottom: 20px; /* Espaciado inferior */
-}
-
 /* Clase para centrar elementos */
 .centered {
     text-align: center !important; /* Centrar texto horizontalmente */
     vertical-align: middle !important; /* Centrar texto verticalmente */
 }
 
-/* Tablas responsivas */
-.table-responsive {
-    max-height: 70vh; /* Limitar la altura máxima para tablas largas */
-    overflow-y: auto; /* Activar scroll vertical */
+/* Flexbox para las cards */
+.flex { 
+    display: flex;
+    flex-wrap: wrap; /* Permite que las tarjetas se ajusten en líneas múltiples */
+    gap: 2%; /* Espaciado entre las tarjetas */
+    justify-content: space-between; /* Espacio equitativo entre las tarjetas */
 }
 
-.table th,
-.table td {
-    text-align: center; /* Centrar texto horizontalmente */
-    vertical-align: middle; /* Centrar texto verticalmente */
+/* Estilo de cada item dentro del flex */
+.flex__item { 
+    flex: 1 1 30%; /* Hace que cada tarjeta ocupe un mínimo de 30% de ancho */
+    margin-bottom: 20px;
+    min-height: 250px; /* Espaciado inferior */
 }
 
-/* Estilo adicional para tabs */
-.nav-tabs {
-    margin-top: 10px; /* Espaciado superior para mejorar estética */
+.card-body {
+    padding: 20px; /* Relleno dentro de las tarjetas */
 }
-.img-thumbnail {
-    width: 100px;  /* Ajusta según el tamaño que desees */
-    height: 100px; /* Mantén un tamaño cuadrado */
-    object-fit: cover; /* Recorta la imagen si es necesario para ajustarse al espacio */
+
+/* Imágenes dentro de las tarjetas */
+.card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: contain; /* Asegura que la imagen no se recorte */
+    background-color: #f7f7f7; /* Fondo gris claro en caso de que no haya imagen */
 }
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+    .flex__item {
+        flex: 1 1 45%; /* En pantallas pequeñas, cada tarjeta ocupa 45% */
+    }
+}
+
+@media (max-width: 480px) {
+    .flex__item {
+        flex: 1 1 100%; /* En pantallas muy pequeñas, las tarjetas se apilan */
+    }
+}
+.flex__item:nth-child(1) .card-body {
+    display: flex; /* Utiliza flexbox para centrar el contenido */
+    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+    justify-content: center; /* Centra el contenido verticalmente */
+    align-items: center; /* Centra el contenido horizontalmente */
+    min-height: 285px; /* Asegura que el card tenga una altura mínima */
+    text-align: center; /* Asegura que el texto esté centrado */
+}
+
+/* Estilo para el ícono */
+.icon-container {
+    margin-top: 20px; /* Separación del ícono con el texto */
+    font-size: 30px; /* Tamaño del ícono */
+}
+
+/* Estilo adicional para el ícono */
+.icon-container i {
+    color: #007bff; /* Color del ícono */
+}
+
+/* Si deseas que el card crezca aún más al añadir contenido */
+.card-body p {
+    margin-top: 15px; /* Separación entre el ícono y el párrafo */
+}
+
+h3, h4 , h2{
+    font-family: 'Montserrat', sans-serif;
+}
+

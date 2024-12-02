@@ -1,41 +1,57 @@
 {%load static%}
 {%include 'header.html' %}
-
-            <!-- Main Content -->
+<div id="main-content" class="col-md-10">
+  <div class="flex">
+    <div class="flex__item">
+      <div class="card">
+        
+        <div class="card-body">
+            <h2 class="centered">Ventas Realizadas</h2>
+          <h4 class="centered">{{ventasD}}</h4>    
+          <div class="icon-container centered">
+            <img src="\media\imgProducts\shopping-basket.png" alt="" style="height: 140px;width: auto;">
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex__item">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="centered">Producto más vendido</h3>
           
-                <div id="main-content" class=" container col-md-10">
-                    <h1 class="text-center mb-4">Inicio</h1>
-            
-                    <div class="row">
-                        <!-- Products Sold Chart -->
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    Productos vendidos
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="productsSoldChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-            
-                        <!-- Inventory Fluctuation Chart -->
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    Fluctuacion de inventario
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="inventoryFluctuationChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+          {% if producto_mas_vendido_imagen %}
+            <img src="/media/{{ producto_mas_vendido_imagen }}" class="card-img-top" alt="{{ producto_mas_vendido }} " style="height: 230px;">
+          {% else %}
+            <p>No hay imagen disponible</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="flex__item">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="centered">Productos Vendidos</h3>
+          {{graph_html3 | safe}}
+        </div>
+      </div>
+    </div>
+    <div class="flex__item">
+      <div class="card">
+        <div class="card-body">
+          {{graph_html1 | safe}}
+        </div>
+      </div>
+    </div>
+    <div class="flex__item">
+      <div class="card">
+        <div class="card-body">
+          {{graph_html2 | safe}}
+        </div>
+      </div>
+    </div>
+  </div> 
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

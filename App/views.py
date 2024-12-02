@@ -1,12 +1,16 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum, F, Value
+from django.db.models import Sum, F, Value, Count
 from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from django.utils import timezone
 from datetime import datetime
+from plotly.offline import plot
+import plotly.graph_objs as go  
+
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
 
@@ -16,8 +20,131 @@ from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, Selecci
 def login (request):
     return render(request,'login.html')
 
-def inicio (request):
-    return render(request,'inicio.html')
+
+""" 
+Dashboard
+"""
+def inicio(request):
+    # Obtener ventas por mes
+    ventas_por_mes = Venta.objects.values('fecha__month').annotate(
+        total_ventas=Sum('cantidad'),
+        total_monto=Sum('precio_unitario')
+    ).order_by('fecha__month')
+
+    # Crear los datos para los gráficos
+    meses = [str(x['fecha__month']) for x in ventas_por_mes]
+    cantidad_ventas = [x['total_ventas'] for x in ventas_por_mes]
+    monto_recaudado = [x['total_monto'] for x in ventas_por_mes]
+
+    # Configuración para desactivar las opciones interactivas
+    config = {
+        'displayModeBar': False,
+        'scrollZoom': False,
+        'showTips': False,
+        'displaylogo': False,
+        'modeBarButtonsToRemove': ['toImage', 'zoomIn2d', 'zoomOut2d']
+    }
+
+    # Gráfico de dinero recaudado por mes (Barras)
+    trace1 = go.Bar(
+        x=meses,
+        y=monto_recaudado,
+        marker=dict(color='rgb(96, 172, 208)')
+    )
+
+    # Gráfico de cantidad de ventas por mes (Líneas o Puntos)
+    trace2 = go.Scatter(
+        x=meses,
+        y=cantidad_ventas,
+        mode='lines+markers',
+        name='Cantidad de ventas',
+        marker=dict(color='rgb(96, 172, 208)', size=10),
+        line=dict(width=2)
+    )
+
+    # Layout para el gráfico de barras
+    layout1 = go.Layout(
+        xaxis={'title': 'Mes'},
+        yaxis={'title': 'Dinero (CLP)'},
+        width=550,   # Ancho del gráfico
+        height=230, # Alto del gráfico
+        margin=dict(l=0, r=0, t=0, b=0),
+    )
+    fig1 = go.Figure(data=[trace1], layout=layout1)
+    graph_html1 = plot(fig1, output_type='div', config=config)
+
+    # Layout para el gráfico de líneas
+    layout2 = go.Layout(
+        xaxis={'title': 'Mes'},
+        yaxis={'title': 'Cantidad de Ventas'},
+        width=550,   # Ancho del gráfico
+        height=230, # Alto del gráfico
+        margin=dict(l=0, r=0, t=0, b=0),
+    )
+    fig2 = go.Figure(data=[trace2], layout=layout2)
+    graph_html2 = plot(fig2, output_type='div', config=config)
+
+    # Obtener la fecha de hoy y filtrar ventas de hoy
+    today = timezone.now().date()
+    start_of_day = timezone.make_aware(datetime.combine(today, datetime.min.time()))
+    end_of_day = timezone.make_aware(datetime.combine(today, datetime.max.time()))
+
+    # Filtrar las ventas realizadas hoy
+    venta_diaria = Venta.objects.filter(
+        fecha__gte=start_of_day,
+        fecha__lte=end_of_day
+    ).aggregate(total_ventas=Sum('cantidad'))
+
+    # Obtener los productos vendidos hoy
+    productos_vendidos = Venta.objects.filter(
+        fecha__gte=start_of_day,
+        fecha__lte=end_of_day
+    ).values('producto__nombre', 'producto__imagen').annotate(total_vendido=Sum('cantidad'))
+
+    # Preparar los datos para el gráfico de dona
+    productos = [x['producto__nombre'] for x in productos_vendidos]
+    cantidades = [x['total_vendido'] for x in productos_vendidos]
+
+    # Crear el gráfico de dona
+    trace3 = go.Pie(
+        labels=productos,
+        values=cantidades,
+        hole=0.4,
+        marker=dict(colors=['rgb(96, 172, 208)', 'rgb(129, 194, 216)', 'rgb(162, 217, 239)']),
+    )
+    layout3 = go.Layout(
+        width=300,   # Ancho del gráfico
+        height=230, # Alto del gráfico
+        margin=dict(l=60, r=0, t=0, b=0),  # Sin márgenes
+        showlegend=False 
+    )
+    fig3 = go.Figure(data=[trace3], layout=layout3)
+    graph_html3 = plot(fig3, output_type='div', config=config)
+    
+    
+    producto_mas_vendido = productos_vendidos.order_by('-total_vendido').first()
+
+    producto_mas_vendido_imagen = None
+    if producto_mas_vendido:
+        producto_mas_vendido_nombre = producto_mas_vendido['producto__nombre']
+        producto_mas_vendido_imagen = producto_mas_vendido.get('producto__imagen', None)
+        print(f"Imagen dinámica: {producto_mas_vendido_imagen}")
+    else:
+        producto_mas_vendido_nombre = 'No hay ventas'
+        producto_mas_vendido_imagen = None
+    # Obtener el producto más vendido
+    producto_mas_vendido = max(productos_vendidos, key=lambda x: x['total_vendido'], default=None)
+   
+
+    # Pasar los datos al template
+    return render(request, 'inicio.html', {
+        'graph_html1': graph_html1,
+        'graph_html2': graph_html2,
+        'ventasD': venta_diaria['total_ventas'] or 0,
+        'graph_html3': graph_html3,
+        'producto_mas_vendido': producto_mas_vendido_nombre,
+        'producto_mas_vendido_imagen': producto_mas_vendido_imagen,
+    })
 
 """
 View Empleados 
@@ -197,7 +324,7 @@ def generar_venta(request):
     p.setFont("Helvetica", 12)
 
     # Agregar detalles de la venta al PDF
-    p.drawString(100, 750, "Boleto de Venta")
+    p.drawString(100, 750, "Comprobante de Venta")
     p.drawString(100, 730, f"Fecha: {venta.fecha}")
 
     # Dibujar encabezados de la tabla
