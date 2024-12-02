@@ -7,6 +7,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>id producto</th>
                         <th>Imagen</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
@@ -19,6 +20,7 @@
                 <tbody>
                     {% for item in productos_carrito %}
                         <tr>
+                            <td>{{item.id}}</td>
                             <td>
                                 <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" class="img-thumbnail" >
                             </td>

@@ -116,6 +116,7 @@ def ver_carrito(request):
         producto = Producto.objects.get(id=producto_id)
         precio_final = producto.precio_con_descuento()
         productos_carrito.append({
+            'id' : producto_id,
             'producto': producto,
             'cantidad': cantidad,
             'precio_unitario': producto.precio,
