@@ -3,17 +3,15 @@
 
 <div id="main-content" class="col-md-10">
     <div class="content-container p-3">
-        <h2>Productos</h2>
-        <ul class="nav nav-tabs">
-            <li class="nav-item"><a href="{% url 'inventario_ver' %}" class="nav-link active"> Ver</a></li>
-            <li class="nav-item "><a href="{% url 'compras_agregar' %}" class="nav-link"> Agregar</a></li>  
-        </ul>
+        <h2>Compras</h2>
+        
         <div class="table-container">
             <ul class="nav nav-tabs">
                 <li class="nav-item"><a href="{% url 'inventario_ver' %}" class="nav-link "> Inventario</a></li>
                 <li class="nav-item "><a href="{% url 'compras_ver' %}" class="nav-link active"> Compras</a></li>  
             </ul>
-
+            <a href="{% url 'compras_agregar' %}" class="btn btn-primary my-3">Agregar Compra</a>
+            
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -29,11 +27,11 @@
                     {% for compras in compra %}
                     <tr>
                         <td>
-                            <a href="{% url 'compras_editar' compras.id %}" class="nav-item" title="Editar">
+                            <a href="{% url 'compras_editar' compras.id %}" class="btn btn-warning" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a> 
-                            <a href="{% url 'compras_deshabilitar' compras.id %}" class="nav-item" title="Deshabilitar">
-                                <i class="bi bi-x-circle text-danger"></i>
+                            <a href="{% url 'compras_deshabilitar' compras.id %}" class="btn btn-danger" title="Deshabilitar">
+                                <i class="bi bi-x-circle "></i>
                             </a>
                         </td>
                         <td>{{ compras.proveedor }}</td>
