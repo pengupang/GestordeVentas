@@ -25,9 +25,13 @@
 </head>
 <body>
         <!-- Header fijo -->
-        <div class="bg-primary text-white py-2 fixed-top">
-            <h3 class="text-left">PlayCom</h3>
+        <div class="bg-primary text-white py-2 fixed-top px-3 d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">PlayCom</h3>
+            <a class="btn btn-secondary" href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
         </div>
+        
     
         <div class="container-fluid">
             <div class="row">
