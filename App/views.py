@@ -612,8 +612,12 @@ View Reportes
 """
 
 
+
+import json
 def generar_reporte(request):
-    reportes = []
+    compras = []
+    ventas = []
+    grafico_data = None  # Datos para el gráfico
 
     if request.method == 'POST':
         fecha_inicio = request.POST.get('fecha_inicio')
@@ -621,25 +625,122 @@ def generar_reporte(request):
         tipo_reporte = request.POST.get('tipo_reporte')
 
         # Filtrar las compras y ventas según las fechas
-        if tipo_reporte == 'compra':
-            reportes = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])
-        elif tipo_reporte == 'venta':
-            reportes = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
-        elif tipo_reporte == 'ambos':
-            reportes = list(Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])) + list(Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final]))
+        if tipo_reporte in ['compra', 'ambos']:
+            compras = Compra.objects.filter(fecha__range=[fecha_inicio, fecha_final])
+        if tipo_reporte in ['venta', 'ambos']:
+            ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_final])
 
         # Guardar los resultados en la sesión
-        request.session['reportes'] = [reporte.id for reporte in reportes]
+        request.session['compras'] = [compra.id for compra in compras]
+        request.session['ventas'] = [venta.id for venta in ventas]
+
+        # Preparar datos para el gráfico
+        if compras or ventas:
+            fechas_comunes = set()
+            compras_data = {}
+            ventas_data = {}
+
+            # Procesar compras
+            for compra in compras:
+                fecha_str = compra.fecha.strftime('%Y-%m-%d')
+                fechas_comunes.add(fecha_str)
+                compras_data[fecha_str] = compras_data.get(fecha_str, 0) + float(compra.precio)
+
+            # Procesar ventas
+            for venta in ventas:
+                fecha_str = venta.fecha.strftime('%Y-%m-%d')
+                fechas_comunes.add(fecha_str)
+                ventas_data[fecha_str] = ventas_data.get(fecha_str, 0) + float(venta.precio_unitario) * venta.cantidad
+
+            # Ordenar fechas y preparar valores
+            fechas_ordenadas = sorted(fechas_comunes)
+            compras_valores = [compras_data.get(fecha, 0) for fecha in fechas_ordenadas]
+            ventas_valores = [ventas_data.get(fecha, 0) for fecha in fechas_ordenadas]
+
+            # Preparar los datasets del gráfico
+            grafico_data = {
+                'labels': fechas_ordenadas,
+                'datasets': [
+                    {
+                        'label': 'Compras',
+                        'data': compras_valores,
+                        'borderColor': 'rgba(75, 192, 192, 1)',
+                        'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+                        'borderWidth': 2,
+                        'fill': False,
+                    },
+                    {
+                        'label': 'Ventas',
+                        'data': ventas_valores,
+                        'borderColor': 'rgba(255, 99, 132, 1)',
+                        'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                        'borderWidth': 2,
+                        'fill': False,
+                    }
+                ]
+            }
 
     else:
         # Recuperar los resultados de la sesión
-        if 'reportes' in request.session:
-            reportes_ids = request.session['reportes']
-            reportes_compras = Compra.objects.filter(id__in=reportes_ids)
-            reportes_ventas = Venta.objects.filter(id__in=reportes_ids)
-            reportes = list(reportes_compras) + list(reportes_ventas)
+        if 'compras' in request.session or 'ventas' in request.session:
+            compras_ids = request.session.get('compras', [])
+            ventas_ids = request.session.get('ventas', [])
+            compras = Compra.objects.filter(id__in=compras_ids)
+            ventas = Venta.objects.filter(id__in=ventas_ids)
 
-    return render(request, 'reportes.html', {'reportes': reportes})
+            # Preparar datos para el gráfico (sesión)
+            if compras or ventas:
+                fechas_comunes = set()
+                compras_data = {}
+                ventas_data = {}
+
+                # Procesar compras
+                for compra in compras:
+                    fecha_str = compra.fecha.strftime('%Y-%m-%d')
+                    fechas_comunes.add(fecha_str)
+                    compras_data[fecha_str] = compras_data.get(fecha_str, 0) + float(compra.precio)
+
+                # Procesar ventas
+                for venta in ventas:
+                    fecha_str = venta.fecha.strftime('%Y-%m-%d')
+                    fechas_comunes.add(fecha_str)
+                    ventas_data[fecha_str] = ventas_data.get(fecha_str, 0) + float(venta.precio_unitario) * venta.cantidad
+
+                # Ordenar fechas y preparar valores
+                fechas_ordenadas = sorted(fechas_comunes)
+                compras_valores = [compras_data.get(fecha, 0) for fecha in fechas_ordenadas]
+                ventas_valores = [ventas_data.get(fecha, 0) for fecha in fechas_ordenadas]
+
+                # Preparar los datasets del gráfico
+                grafico_data = {
+                    'labels': fechas_ordenadas,
+                    'datasets': [
+                        {
+                            'label': 'Compras',
+                            'data': compras_valores,
+                            'borderColor': 'rgba(75, 192, 192, 1)',
+                            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+                            'borderWidth': 2,
+                            'fill': False,
+                        },
+                        {
+                            'label': 'Ventas',
+                            'data': ventas_valores,
+                            'borderColor': 'rgba(255, 99, 132, 1)',
+                            'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                            'borderWidth': 2,
+                            'fill': False,
+                        }
+                    ]
+                }
+
+    return render(request, 'reportes.html', {
+        'compras': compras,
+        'ventas': ventas,
+        'grafico_data': json.dumps(grafico_data) if grafico_data else None
+    })
+
+
 
 
 
