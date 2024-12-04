@@ -3,7 +3,9 @@ body {
     background-color: #f0f8ff; /* Fondo de color azul claro */
     margin-top: 30px; /* Espaciado superior general */
 }
-
+.sidebar .nav-link.active {
+    background-color: #d3e0ea; /* Fondo azul claro para el link activo */
+}
 /* Header fijo */
 .bg-primary {
     height: 60px; /* Altura fija del header */
@@ -76,6 +78,23 @@ body {
     }
 }
 .flex__item:nth-child(1) .card-body {
+    display: flex; /* Utiliza flexbox para centrar el contenido */
+    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+    justify-content: center; /* Centra el contenido verticalmente */
+    align-items: center; /* Centra el contenido horizontalmente */
+    min-height: 285px; /* Asegura que el card tenga una altura mínima */
+    text-align: center; /* Asegura que el texto esté centrado */
+}
+.flex__item:nth-child(2) .card-body {
+    display: flex; /* Utiliza flexbox para centrar el contenido */
+    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+    justify-content: center; /* Centra el contenido verticalmente */
+    align-items: center; /* Centra el contenido horizontalmente */
+    min-height: 285px; /* Asegura que el card tenga una altura mínima */
+    text-align: center; /* Asegura que el texto esté centrado */
+}
+
+.flex__item:nth-child(3) .card-body {
     display: flex; /* Utiliza flexbox para centrar el contenido */
     flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
     justify-content: center; /* Centra el contenido verticalmente */

@@ -10,6 +10,7 @@ from django.utils import timezone
 from datetime import datetime
 from plotly.offline import plot
 import plotly.graph_objs as go  
+import json
 
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
@@ -66,9 +67,9 @@ def inicio(request):
     layout1 = go.Layout(
         xaxis={'title': 'Mes'},
         yaxis={'title': 'Dinero (CLP)'},
-        width=550,   # Ancho del gráfico
+        width=400,   # Ancho del gráfico
         height=230, # Alto del gráfico
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=100, r=0, t=0, b=0),
     )
     fig1 = go.Figure(data=[trace1], layout=layout1)
     graph_html1 = plot(fig1, output_type='div', config=config)
@@ -77,9 +78,9 @@ def inicio(request):
     layout2 = go.Layout(
         xaxis={'title': 'Mes'},
         yaxis={'title': 'Cantidad de Ventas'},
-        width=550,   # Ancho del gráfico
+        width=400,   # Ancho del gráfico
         height=230, # Alto del gráfico
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=100, r=0, t=0, b=0),
     )
     fig2 = go.Figure(data=[trace2], layout=layout2)
     graph_html2 = plot(fig2, output_type='div', config=config)
@@ -115,7 +116,7 @@ def inicio(request):
     layout3 = go.Layout(
         width=300,   # Ancho del gráfico
         height=230, # Alto del gráfico
-        margin=dict(l=60, r=0, t=0, b=0),  # Sin márgenes
+        margin=dict(l=20, r=0, t=0, b=0),  # Sin márgenes
         showlegend=False 
     )
     fig3 = go.Figure(data=[trace3], layout=layout3)
@@ -613,7 +614,6 @@ View Reportes
 
 
 
-import json
 def generar_reporte(request):
     compras = []
     ventas = []
