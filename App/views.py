@@ -413,8 +413,8 @@ def generar_venta(request):
 
         # Mostrar descuento si hay
         if detalle['descuento'] > 0:
-            p.drawString(100, y_position - 20, f"Descuento: {detalle['descuento']}%")
-            p.drawString(250, y_position - 20, f"Precio Final con Descuento: ${detalle['precio_final']:.2f}")
+            p.drawString(100, y_position - 30, f"Descuento: {detalle['descuento']}%")
+            p.drawString(250, y_position - 30, f"Precio Final con Descuento: ${detalle['precio_final']:.2f}")
         
         # Dibujar una línea después de cada producto
         p.line(50, y_position - 10, 550, y_position - 10)
