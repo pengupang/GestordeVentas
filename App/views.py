@@ -43,7 +43,7 @@ def login(request):
             request.session['empleado_id'] = empleado.id
             request.session['empleado_tipo'] = empleado.tipo
             messages.success(request, f'Bienvenido {empleado.nombre}')
-            return redirect('empleados')  # Redirige a la vista principal
+            return redirect('inicio')  # Redirige a la vista principal
         else:
             messages.error(request, 'Contraseña incorrecta.')
     return render(request, 'login.html')
@@ -67,7 +67,7 @@ def verificar_permiso(roles_permitidos):
             
             if empleado_tipo not in roles_permitidos:  # Restringe el acceso según el rol
                 messages.error(request, 'No tienes acceso a esta sección.')
-                return redirect('empleados')  # Redirige a la vista de empleados o cualquier vista accesible
+                return redirect('inicio')  # Redirige a la vista de empleados o cualquier vista accesible
 
             return func(request, *args, **kwargs)
         return wrapper
@@ -202,7 +202,7 @@ def inicio(request):
 View Empleados 
 """
 
-@verificar_permiso(['Manager', 'Bodeguero','Vendedor'])
+@verificar_permiso(['Manager'])
 def empleados (request):
     empleado = Empleado.objects.filter(habilitado=True)
     return render(request, 'empleados_ver.html', {'empleado': empleado})
@@ -501,7 +501,7 @@ def actualizar_inventario(request, id):
 
     return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager'])
 def reducir_cantidad_producto(request, producto_id, cantidad):
     """
     Reduce la cantidad de un producto en el inventario.
@@ -556,7 +556,7 @@ def deshabilitar_producto(request, producto_id):
     messages.success(request, f'Producto {producto.nombre} deshabilitado.')
     return redirect('inventario_ver') 
 
-@verificar_permiso(['Manager', 'Bodeguero'])
+@verificar_permiso(['Manager'])
 def habilitar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.habilitado = True
@@ -603,7 +603,7 @@ def seleccionar_producto(request):
 
     return render(request, 'seleccionar_producto.html', {'form': form})
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager'])
 def editar_compra(request, id):
     compra = get_object_or_404(Compra, id=id)
     if request.method == 'POST':
@@ -670,7 +670,7 @@ def actualizar_proveedor(request, proveedor_id):
 """
 View Compras 
 """
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager', 'Bodeguero'])
 def compra_agregar(request):
     last_compra = Compra.objects.order_by('id').last()
     next_id = last_compra.id + 1 if last_compra else 1
@@ -697,13 +697,13 @@ def compra_agregar(request):
     }
     return render(request, 'inventario_compras.html', context)
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager', 'Bodeguero'])
 def compras_Ver (request):
     compras = Compra.objects.filter(habilitado=True)
     data = {'compra':compras}
     return render(request,'compras_ver.html',data)
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager'])
 def compra_deshabilitar(request,compra_id):
     compra = get_object_or_404(Compra, id=compra_id)
     compra.habilitado = False
@@ -711,7 +711,7 @@ def compra_deshabilitar(request,compra_id):
     messages.success(request, f'Producto {compra.producto} deshabilitado.')
     return redirect('compras_ver') 
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager'])
 def compra_editar(request,id):
     compra=Compra.objects.get(id=id)
     form=CompraForm(instance=compra)
@@ -728,7 +728,7 @@ View Reportes
 """
 
 
-@verificar_permiso(['Manager','Vendedor'])
+@verificar_permiso(['Manager', 'Bodeguero'])
 def generar_reporte(request):
     compras = []
     ventas = []

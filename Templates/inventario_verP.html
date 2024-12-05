@@ -17,7 +17,7 @@
         </ul>
         {% if messages %}
             {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -27,15 +27,7 @@
             Hay productos con pocas unidades.
           </div>
 
-          {% if messages %}
-          <div class="alert-container">
-              {% for message in messages %}
-                  <div class="alert alert-{{ message.tags }}">
-                      {{ message }}
-                  </div>
-              {% endfor %}
-          </div>
-      {% endif %}
+          
       
         <a class="btn btn-primary my-3" href="{% url 'producto_agregar' %}">Agregar nuevo producto</a>
         <a class="btn btn-primary my-3" href="{% url 'ver_deshabilitados' %}">Ver productos deshabilitados</a>
