@@ -6,9 +6,9 @@
     <div class="content-container p-3">
         <h2>Proveedores</h2>
         <ul class="nav nav-tabs">
-            <li class="nav-item"><a href="../proveedor_ver/" class="nav-link active"> Ver</a></li>
-            <li class="nav-item "><a href="../proveedor_ingresar/" class="nav-link "> Agregar</a></li>  
+        
         </ul>
+        <a href="{%url 'proveedores_agregar'%}" class="btn btn-primary my-3"> Agregar</a>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">

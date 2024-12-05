@@ -5,13 +5,17 @@
 <div id="main-content" class="col-md-10">
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item"><a href="../proveedor_ver/" class="nav-link "> Ver</a></li>
-                    <li class="nav-item "><a href="../proveedor_ingresar/" class="nav-link active"> Agregar</a></li>  
-                </ul>
-                <div class="card shadow-lg p-4">
-                    <h3 class="text-center mb-4">Agregar Proveedor</h3>
+         
+              
+                <div class="card shadow-lg p-5"> 
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <a href="{% url 'proveedores_ver' %}" class="btn btn-secondary w-20 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-arrow-left-short me-2"></i> Volver
+                        </a>
+                        <!-- Título al centro -->
+                        <h3 class="text-center w-100">Agregar Proveedor</h3>
+                    </div>
                     <form method="POST">
                         {% csrf_token %}
                         {{form.as_p}}
