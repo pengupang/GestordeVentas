@@ -29,7 +29,7 @@ urlpatterns = [
     path('inicio/', views.inicio, name='inicio'),
 
     # Empleados
-    path('empleados/', views.empleados, name='empleados_ver'),
+    path('empleados/', views.empleados, name='empleados'),
     path('empleados/agregar/', views.agregar_empleado, name='empleados_agregar'),
     path('empleados/actualizar/<int:empleado_id>/', views.actualizar_empleado, name='empleados_actualizar'),
     path('empleados/deshabilitar/<int:empleado_id>/', views.deshabilitar_empleado, name='empleados_deshabilitar'),

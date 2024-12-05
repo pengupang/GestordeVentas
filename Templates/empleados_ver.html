@@ -2,6 +2,13 @@
 {%include 'header.html' %}
 
 <div id="main-content" class="col-md-10">
+    {% if messages %}
+    <div class="alert alert-danger">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
     <!-- Employees Table Section -->
     <div class="content-container p-3">
         <h2>Usuarios</h2>

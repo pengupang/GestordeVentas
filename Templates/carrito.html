@@ -40,8 +40,14 @@
                                 <p>Cantidad: {{ item.cantidad }}</p>
                                 <p>Subtotal: {{ item.subtotal }}</p>
 
-                                <button onclick="actualizarCantidad({ id }, 'aumentar')">Aumentar</button>
-                                <button onclick="actualizarCantidad({ id }, 'disminuir')">Disminuir</button>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="actualizarCantidad('{{ item.producto.id }}', 'aumentar')">
+                                        Aumentar
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="actualizarCantidad('{{ item.producto.id }}', 'disminuir')">
+                                        Disminuir
+                                    </button>
+                                </td>
                                                                 
                             </td>
                             <td>${{ item.precio_unitario }}</td>
@@ -54,7 +60,9 @@
                             </td>
                             <td> {{item.precio_final}}</td>
                             <td>
-                                <a href="{% url 'carrito_eliminar' item.producto.id %}" class="btn btn-danger btn-sm"><i class="bi bi-x-square"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmarEliminacion('{{ item.producto.id }}')">
+                                    <i class="bi bi-x-square"></i>
+                                </a>
                             </td>
                         </tr>
 
@@ -62,21 +70,44 @@
                     {% endfor %}
 
                     <script>
-                        function actualizarCantidad(id_producto, accion) {
-                            fetch(`/actualizar_carrito/${id_producto}/${accion}/`, {
-                                method: 'GET',
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Recarga la página para actualizar la interfaz
-                                    location.reload();  
-                                } else {
-                                    alert('Error al actualizar la cantidad');
+                            function actualizarCantidad(id_producto, accion) {
+                                fetch(`/actualizar_carrito/${id_producto}/${accion}/`, {
+                                    method: 'GET',
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        if (data.confirmar_eliminacion) {
+                                            // Muestra un mensaje de confirmación si es la última unidad
+                                            const confirmacion = confirm("Estás eliminando la última unidad. ¿Quieres eliminar este producto del carrito?");
+                                            if (confirmacion) {
+                                                // Elimina el producto completamente
+                                                fetch(`/carrito/eliminar/${id_producto}/`, {
+                                                    method: 'GET',
+                                                })
+                                                .then(() => location.reload()); // Recarga después de eliminar
+                                            }
+                                        } else {
+                                            // Si no es la última unidad, simplemente recarga
+                                            location.reload();
+                                        }
+                                    } else {
+                                        alert('Error al actualizar la cantidad');
+                                    }
+                                })
+                                .catch(error => console.log('Error:', error));
+                            }
+
+                        </script>
+
+                        <script>
+                            function confirmarEliminacion(productoId) {
+                                const confirmacion = confirm("¿Estás seguro de que deseas eliminar este producto del carrito?");
+                                if (confirmacion) {
+                                    // Redirige a la URL que elimina el producto
+                                    window.location.href = `/carrito/eliminar/${productoId}/`;
                                 }
-                            })
-                            .catch(error => console.log('Error:', error));
-                        }
+                            }
                         </script>
                 </tbody>
             </table>

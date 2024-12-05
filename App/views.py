@@ -1,4 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F, Value, Count
 from django.db.models.functions import Coalesce
@@ -11,6 +14,7 @@ from datetime import datetime
 from plotly.offline import plot
 import plotly.graph_objs as go  
 import json
+from functools import wraps
 
 from App.models import Proveedor, Empleado, Compra,Producto,Venta, Reporte, HistorialInventario, SeleccionProducto
 from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, SeleccionProductoForm
@@ -18,9 +22,56 @@ from .forms import ProveedorForm, EmpleadoForm, CompraForm,ProductoForm, Selecci
 
 
 # Create your views here.
-def login (request):
-    return render(request,'login.html')
+def login(request):
+    if request.method == "POST":
+        nombre = request.POST.get('nombre')  # Recibimos el nombre del formulario
+        contrasena = request.POST.get('password')
 
+        try:
+            empleado = Empleado.objects.get(nombre=nombre)  # Busca el empleado por nombre
+        except Empleado.DoesNotExist:
+            messages.error(request, 'El usuario no existe.')
+            return redirect('login')
+
+        # Comparar las contraseñas directamente (sin encriptación)
+        if contrasena == empleado.contrasena:  # Verifica la contraseña directamente
+            if not empleado.habilitado:
+                messages.error(request, 'Tu cuenta está deshabilitada.')
+                return redirect('login')
+
+            # Autenticación exitosa, guardar datos en sesión
+            request.session['empleado_id'] = empleado.id
+            request.session['empleado_tipo'] = empleado.tipo
+            messages.success(request, f'Bienvenido {empleado.nombre}')
+            return redirect('empleados')  # Redirige a la vista principal
+        else:
+            messages.error(request, 'Contraseña incorrecta.')
+    return render(request, 'login.html')
+
+
+
+
+
+
+def verificar_permiso(roles_permitidos):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            empleado_tipo = request.session.get('empleado_tipo')
+            
+            if 'empleado_id' not in request.session:
+                return redirect('login')  # Redirige al login si no está autenticado
+            
+            if empleado_tipo == 'Manager':  # Managers tienen acceso total
+                return func(request, *args, **kwargs)
+            
+            if empleado_tipo not in roles_permitidos:  # Restringe el acceso según el rol
+                messages.error(request, 'No tienes acceso a esta sección.')
+                return redirect('empleados')  # Redirige a la vista de empleados o cualquier vista accesible
+
+            return func(request, *args, **kwargs)
+        return wrapper
+    return decorator
 
 """ 
 Dashboard
@@ -150,11 +201,13 @@ def inicio(request):
 """
 View Empleados 
 """
+
+@verificar_permiso(['Manager', 'Bodeguero','Vendedor'])
 def empleados (request):
     empleado = Empleado.objects.filter(habilitado=True)
     return render(request, 'empleados_ver.html', {'empleado': empleado})
 
-
+@verificar_permiso(['Manager'])
 def agregar_empleado(request):
     form = EmpleadoForm()
     if request.method == 'POST':
@@ -162,12 +215,13 @@ def agregar_empleado(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Empleado Ingresado') #Mensaje de empleado ingresado
-            return redirect('../empleados_ver/') 
+            return redirect('../empleados/') 
         else:
             messages.error(request, 'Error empleado no ingresado') # Mensaje de error
     data = {'form': form }
     return render(request,'empleados_agregar.html',data)
 
+@verificar_permiso(['Manager'])
 def actualizar_empleado(request, empleado_id):
     empleado=get_object_or_404(Empleado, id=empleado_id)
     form=EmpleadoForm(instance=empleado)
@@ -179,6 +233,7 @@ def actualizar_empleado(request, empleado_id):
     data={'form':form,'titulo':'Empleado actualizado'}
     return render(request,'empleados_agregar.html',data)
 
+@verificar_permiso(['Manager'])
 def deshabilitar_empleado(request, empleado_id):
     empleados = get_object_or_404(Empleado, id=empleado_id)
     empleados.habilitado = False  
@@ -190,6 +245,7 @@ def deshabilitar_empleado(request, empleado_id):
 """
 View Catalago 
 """
+@verificar_permiso(['Manager','Vendedor'])
 def catalogo_view(request):
     query = request.GET.get('q')
     if query:
@@ -199,41 +255,51 @@ def catalogo_view(request):
     
     return render(request, 'catalogo.html', {'productos': productos})
 
+@verificar_permiso(['Manager','Vendedor'])
 def agregar_al_carrito(request, producto_id):
     carrito = request.session.get('carrito', {})
-    carrito[producto_id] = carrito.get(producto_id, 0) + 1  # Incrementa la cantidad del producto
+    # Asegúrate de usar cadenas como claves si la sesión las guarda así
+    producto_id = str(producto_id)
+    carrito[producto_id] = carrito.get(producto_id, 0) + 1
     request.session['carrito'] = carrito
     return redirect('carrito')  # Redirige al carrito después de agregar
 
+@verificar_permiso(['Manager','Vendedor'])
 def disminuir_del_carrito(request, producto_id):
     carrito = request.session.get('carrito', {})
+    producto_id = str(producto_id)
     if producto_id in carrito:
         if carrito[producto_id] > 1:
-            carrito[producto_id] -= 1  # Disminuye la cantidad del producto
+            carrito[producto_id] -= 1  # Disminuye la cantidad
         else:
             del carrito[producto_id]  # Elimina el producto si la cantidad es 0
     request.session['carrito'] = carrito
-    return redirect('carrito')
+    return redirect('carrito')  # Redirige al carrito después de disminuir
 
+@verificar_permiso(['Manager','Vendedor'])
 def actualizar_carrito(request, id_producto, accion):
+    carrito = request.session.get('carrito', {})
+    id_producto = str(id_producto)  # Asegúrate de manejar las claves como cadenas
+    confirmar_eliminacion = False
+
     try:
-        # Buscar el producto en el carrito
-        carrito_item = SeleccionProducto.objects.get(id=id_producto, usuario=request.user)
-        
-        # Actualizar la cantidad según la acción (aumentar o disminuir)
         if accion == 'aumentar':
-            carrito_item.cantidad += 1
-        elif accion == 'disminuir' and carrito_item.cantidad > 1:
-            carrito_item.cantidad -= 1
-        else:
-            return JsonResponse({'success': False}, status=400)
-        
-        carrito_item.save()  # Guardar el cambio
+            carrito[id_producto] = carrito.get(id_producto, 0) + 1
+        elif accion == 'disminuir':
+            if carrito.get(id_producto, 0) == 1:
+                confirmar_eliminacion = True  # Marca para confirmación
+            elif carrito.get(id_producto, 0) > 1:
+                carrito[id_producto] -= 1
+            else:
+                del carrito[id_producto]  # Elimina si la cantidad es 0
 
-        return JsonResponse({'success': True})
-    except SeleccionProducto.DoesNotExist:
-        return JsonResponse({'success': False}, status=404)
+        request.session['carrito'] = carrito  # Guarda el carrito actualizado
+        return JsonResponse({'success': True, 'confirmar_eliminacion': confirmar_eliminacion})
+    except Exception as e:
+        print(f"Error: {e}")
+        return JsonResponse({'success': False}, status=400)
 
+@verificar_permiso(['Manager', 'Bodeguero','Vendedor'])
 def ver_carrito(request):
     carrito = request.session.get('carrito', {})  # Suponiendo que el carrito se guarda en la sesión
     productos_carrito = []
@@ -259,6 +325,7 @@ def ver_carrito(request):
 
     return render(request, 'carrito.html', {'productos_carrito': productos_carrito, 'total': total})
 
+@verificar_permiso(['Manager','Vendedor'])
 def eliminar_del_carrito(request, producto_id):
     carrito = request.session.get('carrito', {})
     
@@ -270,6 +337,7 @@ def eliminar_del_carrito(request, producto_id):
 """
 View ventas 
 """
+@verificar_permiso(['Manager','Vendedor'])
 def generar_venta(request):
     carrito = request.session.get('carrito', {})
     total_venta = 0  # Total de la venta
@@ -372,6 +440,7 @@ View Inventario
 def deshabilitados_ver (request):
     return render(request, 'productosDeshabilitados.html')
 
+
 def listaDeshabilitados (request):
 
     productos = Producto.objects.filter(habilitado= False)  # Filtra solo los productos Desactivados
@@ -389,6 +458,7 @@ def listaDeshabilitados (request):
 def inventario_ver(request):
     return render(request, 'inventario_verP.html')
 
+
 def lista_productos(request):
     productos = Producto.objects.filter(habilitado=True)  # Filtra solo los productos habilitados
     productos_data = [
@@ -402,7 +472,7 @@ def lista_productos(request):
     ]
     return JsonResponse({'productos': productos_data})
 
-
+@verificar_permiso(['Manager'])
 def actualizar_inventario(request, id):
     producto = get_object_or_404(Producto, id=id)
     form = ProductoForm(instance=producto)
@@ -425,12 +495,13 @@ def actualizar_inventario(request, id):
                 messages.warning(request, f"¡Advertencia! El producto '{producto.nombre}' tiene solo {producto.cantidad} unidades disponibles, ¡está por debajo del mínimo de {producto.cantidad_minima} unidades!")
 
             messages.success(request, 'Inventario actualizado correctamente.')
-            return redirect('inventario_ver')
+            return redirect('.../inventario/')
         else:
             messages.error(request, 'Error al actualizar el inventario.')
 
     return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
 
+@verificar_permiso(['Manager','Vendedor'])
 def reducir_cantidad_producto(request, producto_id, cantidad):
     """
     Reduce la cantidad de un producto en el inventario.
@@ -457,12 +528,13 @@ def reducir_cantidad_producto(request, producto_id, cantidad):
 #    productos_bajo_stock = Producto.objects.filter(cantidad__lte=models.f('cantidad_minima'))
 #    return render(request, 'productos_bajo_stock.html', {'productos_bajo_stock': productos_bajo_stock})
 
-
+@verificar_permiso(['Manager', 'Bodeguero','Vendedor'])
 def historial_inventario(request):
     # Obtener todo el historial (entradas y salidas)
     historial = HistorialInventario.objects.all().order_by('-fecha')  # Ordenar por fecha descendente
     return render(request, 'historial_inventario.html', {'historial': historial})
 
+@verificar_permiso(['Manager', 'Bodeguero'])
 def agregar_producto(request):
     form = ProductoForm()
     if request.method == 'POST':
@@ -470,12 +542,13 @@ def agregar_producto(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Producto Ingresado') # Mensaje de producto ingresado
-            return redirect('../inventario_ver/') 
+            return redirect('../inventario/') 
         else:
             messages.error(request, 'Error producto no ingresado') # Mensaje de error
     data = {'form': form }
     return render(request,'producto_agregar.html',data)
 
+@verificar_permiso(['Manager'])
 def deshabilitar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.habilitado = False
@@ -483,6 +556,7 @@ def deshabilitar_producto(request, producto_id):
     messages.success(request, f'Producto {producto.nombre} deshabilitado.')
     return redirect('inventario_ver') 
 
+@verificar_permiso(['Manager', 'Bodeguero'])
 def habilitar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.habilitado = True
@@ -490,6 +564,7 @@ def habilitar_producto(request, producto_id):
     messages.success(request, f'Producto {producto.nombre} habilitado.')
     return redirect('ver_deshabilitados') 
 
+@verificar_permiso(['Manager'])
 def reducir_cantidad_producto(request, producto_id, cantidad):
     """
     Reduce la cantidad de un producto en el inventario.
@@ -516,6 +591,7 @@ def productos_mayor_variacion(request):
     )
     return render(request, '#', {'productos_variacion': productos_variacion})
 
+@verificar_permiso(['Manager', 'Bodeguero','Vendedor'])
 def seleccionar_producto(request):
     if request.method == 'POST':
         form = SeleccionProductoForm(request.POST)
@@ -527,6 +603,7 @@ def seleccionar_producto(request):
 
     return render(request, 'seleccionar_producto.html', {'form': form})
 
+@verificar_permiso(['Manager','Vendedor'])
 def editar_compra(request, id):
     compra = get_object_or_404(Compra, id=id)
     if request.method == 'POST':
@@ -546,6 +623,8 @@ def editar_compra(request, id):
 """
 View Proveedores 
 """
+
+@verificar_permiso(['Manager'])
 def proveedores_ingresar(request):
     form = ProveedorForm()
     if request.method == 'POST':
@@ -559,11 +638,13 @@ def proveedores_ingresar(request):
     data = {'form': form }
     return render(request,'proveedores_ingresar.html',data)
 
+@verificar_permiso(['Manager'])
 def proveedores_ver(request):
     proveedor = Proveedor.objects.all()
     data = {'proveedor':proveedor}
     return render(request,'proveedores_ver.html',data)
 
+@verificar_permiso(['Manager'])
 def deshabilitar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     proveedor.habilitado = False  
@@ -571,6 +652,7 @@ def deshabilitar_proveedor(request, proveedor_id):
     messages.success(request, f'Proveedor {proveedor.Nombre} deshabilitado.')
     return redirect('proveedores_ver')
 
+@verificar_permiso(['Manager'])
 def actualizar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     
@@ -588,6 +670,7 @@ def actualizar_proveedor(request, proveedor_id):
 """
 View Compras 
 """
+@verificar_permiso(['Manager','Vendedor'])
 def compra_agregar(request):
     last_compra = Compra.objects.order_by('id').last()
     next_id = last_compra.id + 1 if last_compra else 1
@@ -614,12 +697,13 @@ def compra_agregar(request):
     }
     return render(request, 'inventario_compras.html', context)
 
-
+@verificar_permiso(['Manager','Vendedor'])
 def compras_Ver (request):
     compras = Compra.objects.filter(habilitado=True)
     data = {'compra':compras}
     return render(request,'compras_ver.html',data)
 
+@verificar_permiso(['Manager','Vendedor'])
 def compra_deshabilitar(request,compra_id):
     compra = get_object_or_404(Compra, id=compra_id)
     compra.habilitado = False
@@ -627,6 +711,7 @@ def compra_deshabilitar(request,compra_id):
     messages.success(request, f'Producto {compra.producto} deshabilitado.')
     return redirect('compras_ver') 
 
+@verificar_permiso(['Manager','Vendedor'])
 def compra_editar(request,id):
     compra=Compra.objects.get(id=id)
     form=CompraForm(instance=compra)
@@ -643,7 +728,7 @@ View Reportes
 """
 
 
-
+@verificar_permiso(['Manager','Vendedor'])
 def generar_reporte(request):
     compras = []
     ventas = []
