@@ -411,14 +411,18 @@ def actualizar_inventario(request, id):
         form = ProductoForm(request.POST, request.FILES, instance=producto)
         if form.is_valid():
             producto = form.save(commit=False)
-            producto.actualizado_por = request.user.username  # Registrar el usuario que hizo el cambio
-            producto.razon_actualizacion = form.cleaned_data['razon_actualizacion']  # Registrar la razón
+            producto.actualizado_por = request.user.username  
+            producto.razon_actualizacion = form.cleaned_data['razon_actualizacion']  
             producto.save()
 
-            #Custion para verificar si llego a 0
+            # Verificar si llego a 0
             if producto.cantidad == 0:
                 producto.habilitado = False
                 producto.save()
+
+            # Verificar si la cantidad está por debajo del mínimo
+            if producto.cantidad <= producto.cantidad_minima:
+                messages.warning(request, f"¡Advertencia! El producto '{producto.nombre}' tiene solo {producto.cantidad} unidades disponibles, ¡está por debajo del mínimo de {producto.cantidad_minima} unidades!")
 
             messages.success(request, 'Inventario actualizado correctamente.')
             return redirect('inventario_ver')
@@ -426,6 +430,32 @@ def actualizar_inventario(request, id):
             messages.error(request, 'Error al actualizar el inventario.')
 
     return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
+
+def reducir_cantidad_producto(request, producto_id, cantidad):
+    """
+    Reduce la cantidad de un producto en el inventario.
+    """
+    producto = get_object_or_404(Producto, id=producto_id)
+
+    # Verificar si la cantidad a reducir no excede el stock
+    if cantidad > producto.cantidad:
+        messages.error(request, f"La cantidad a reducir ({cantidad}) excede el stock disponible ({producto.cantidad}).")
+        return JsonResponse({'error': 'Cantidad excede el stock disponible'}, status=400)
+
+    # Reducir la cantidad del producto
+    producto.cantidad -= cantidad
+    producto.save()
+
+    # Verificar si la cantidad está por debajo del mínimo
+    if producto.cantidad <= producto.cantidad_minima:
+        messages.warning(request, f"¡Advertencia! El producto '{producto.nombre}' tiene solo {producto.cantidad} unidades disponibles, ¡está por debajo del mínimo de {producto.cantidad_minima} unidades!")
+
+    messages.success(request, f"Se redujeron {cantidad} unidades del producto '{producto.nombre}'.")
+    return JsonResponse({'message': 'Cantidad reducida exitosamente', 'nueva_cantidad': producto.cantidad})
+
+#def productos_bajo_stock(request):
+#    productos_bajo_stock = Producto.objects.filter(cantidad__lte=models.f('cantidad_minima'))
+#    return render(request, 'productos_bajo_stock.html', {'productos_bajo_stock': productos_bajo_stock})
 
 
 def historial_inventario(request):
