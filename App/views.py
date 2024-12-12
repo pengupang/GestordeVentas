@@ -3,9 +3,10 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum, F, Value, Count
+from django.db.models import Sum, F, Value, Count, Q
 from django.db.models.functions import Coalesce
 from django.http.response import JsonResponse
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -232,6 +233,26 @@ def actualizar_empleado(request, empleado_id):
         return redirect('empleados_ver')
     data={'form':form,'titulo':'Empleado actualizado'}
     return render(request,'empleados_agregar.html',data)
+
+@verificar_permiso(['Manager'])
+def empleados_ver(request):
+    query = request.GET.get('q', '')
+
+    empleados = Empleado.objects.filter(
+        Q(nombre__icontains=query) | 
+        Q(apellido__icontains=query) | 
+        Q(email__icontains=query) | 
+        Q(tipo__icontains=query)
+    )
+
+    paginator = Paginator(empleados, 10) 
+    page_number = request.GET.get('page', 1)
+    empleados_paginados = paginator.get_page(page_number)
+    return render(request, 'empleados_ver.html', {
+        'empleado': empleados_paginados,  
+        'query': query, 
+    })
+
 
 @verificar_permiso(['Manager'])
 def deshabilitar_empleado(request, empleado_id):

@@ -34,6 +34,7 @@ urlpatterns = [
     path('empleados/actualizar/<int:empleado_id>/', views.actualizar_empleado, name='empleados_actualizar'),
     path('empleados/deshabilitar/<int:empleado_id>/', views.deshabilitar_empleado, name='empleados_deshabilitar'),
     path('empleados_agregar/', views.agregar_empleado, name='empleados_agregar'),
+    path('empleados/ver/', views.empleados_ver, name='empleados_ver'),
 
     # Catálogo y carrito
     path('catalogo/', views.catalogo_view, name='catalogo'),
