@@ -472,10 +472,18 @@ def lista_productos(request):
     ]
     return JsonResponse({'productos': productos_data})
 
+
 @verificar_permiso(['Manager'])
 def actualizar_inventario(request, id):
     producto = get_object_or_404(Producto, id=id)
     form = ProductoForm(instance=producto)
+    if request.method == 'POST':
+        form= ProductoForm(request.POST,instance=Producto)   
+        if form.is_valid():
+            form.save()
+        return redirect('inventario_verP')
+    data={'form':form,'titulo':'Producto actualizado'}
+    return render(request,'inventaio_verP.html',data)
 
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES, instance=producto)
