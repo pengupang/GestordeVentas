@@ -695,18 +695,28 @@ def compra_agregar(request):
     next_id = last_compra.id + 1 if last_compra else 1
 
     if request.method == "POST":
-        if last_compra and next_id == Compra.objects.order_by('id').last().id:
-            next_id += 1
         form = CompraForm(request.POST)
         if form.is_valid():
-            form.instance.orden = next_id
-            form.save() 
-            messages.success(request, 'Producto agregado.') # Mensaje de producto agregado
-            return redirect('compras_ver')
+            compra = form.save(commit=False)  
 
-    form = CompraForm()
+            compra.orden = next_id
+            compra.save()
 
-    productos = Producto.objects.all()
+            
+            producto = compra.producto  
+            cantidad_comprada = compra.cantidad
+
+           
+            producto.cantidad += cantidad_comprada
+            producto.save()
+
+            messages.success(request, f"Compra registrada correctamente. Se han agregado {cantidad_comprada} unidades de '{producto.nombre}' al inventario.")
+            return redirect('inventario_ver') 
+
+    else:
+        form = CompraForm()
+
+    productos = Producto.objects.all()  # Obtener todos los productos para mostrarlos en el formulario
 
     context = {
         'form': form,
@@ -714,8 +724,8 @@ def compra_agregar(request):
         'productos': productos,
         'next_id': next_id,
     }
-    return render(request, 'inventario_compras.html', context)
 
+    return render(request, 'inventario_compras.html', context)
 @verificar_permiso(['Manager', 'Bodeguero'])
 def compras_Ver (request):
     compras = Compra.objects.filter(habilitado=True)
