@@ -230,8 +230,8 @@ def actualizar_empleado(request, empleado_id):
         form=EmpleadoForm(request.POST,instance=empleado)
         if form.is_valid():
             form.save()
-        return redirect('empleados_ver')
-    data={'form':form,'titulo':'Empleado actualizado'}
+        return redirect('empleados')
+    data={'form':form,'titulo':'Empleado Actualizar'}
     return render(request,'empleados_agregar.html',data)
 
 @verificar_permiso(['Manager'])
@@ -260,7 +260,7 @@ def deshabilitar_empleado(request, empleado_id):
     empleados.habilitado = False  
     empleados.save()
     messages.success(request, f'Empleado {empleados.nombre} deshabilitado.')
-    return redirect('empleados_ver')
+    return redirect('empleados')
     
 
 """
@@ -498,13 +498,6 @@ def lista_productos(request):
 def actualizar_inventario(request, id):
     producto = get_object_or_404(Producto, id=id)
     form = ProductoForm(instance=producto)
-    if request.method == 'POST':
-        form= ProductoForm(request.POST,instance=Producto)   
-        if form.is_valid():
-            form.save()
-        return redirect('inventario_verP')
-    data={'form':form,'titulo':'Producto actualizado'}
-    return render(request,'inventaio_verP.html',data)
 
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES, instance=producto)
@@ -524,7 +517,7 @@ def actualizar_inventario(request, id):
                 messages.warning(request, f"¡Advertencia! El producto '{producto.nombre}' tiene solo {producto.cantidad} unidades disponibles, ¡está por debajo del mínimo de {producto.cantidad_minima} unidades!")
 
             messages.success(request, 'Inventario actualizado correctamente.')
-            return redirect('.../inventario/')
+            return redirect('inventario')
         else:
             messages.error(request, 'Error al actualizar el inventario.')
 
