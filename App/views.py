@@ -507,21 +507,18 @@ def actualizar_inventario(request, id):
             producto.razon_actualizacion = form.cleaned_data['razon_actualizacion']  
             producto.save()
 
-            # Verificar si llego a 0
+            # Verificar si llegó a 0
             if producto.cantidad == 0:
                 producto.habilitado = False
                 producto.save()
 
-            # Verificar si la cantidad está por debajo del mínimo
-            if producto.cantidad <= producto.cantidad_minima:
-                messages.warning(request, f"¡Advertencia! El producto '{producto.nombre}' tiene solo {producto.cantidad} unidades disponibles, ¡está por debajo del mínimo de {producto.cantidad_minima} unidades!")
-
             messages.success(request, 'Inventario actualizado correctamente.')
-            return redirect('inventario')
+            return redirect('inventario_ver')
         else:
             messages.error(request, 'Error al actualizar el inventario.')
 
     return render(request, 'producto_actualizar.html', {'form': form, 'producto': producto})
+
 
 @verificar_permiso(['Manager'])
 def reducir_cantidad_producto(request, producto_id, cantidad):
@@ -564,7 +561,7 @@ def agregar_producto(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Producto Ingresado') # Mensaje de producto ingresado
-            return redirect('../inventario/') 
+            return redirect('inventario_ver') 
         else:
             messages.error(request, 'Error producto no ingresado') # Mensaje de error
     data = {'form': form }
